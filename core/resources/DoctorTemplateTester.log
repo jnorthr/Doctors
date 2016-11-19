@@ -1,0 +1,98 @@
+DoctorTemplate starting
+
+DoctorTemplate step 1<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.0">
+<title>Hello world!</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic|Noto+Serif:400,400italic,700,700italic|Droid+Sans+Mono:400">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Hello world!</h1>
+</div>
+<div id="content">
+
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2016-11-14 21:39:06 +01:00
+</div>
+</div>
+</body>
+</html>
+DoctorTemplate step 2 :<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.0">
+<title>Welcome mrhaki,</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic|Noto+Serif:400,400italic,700,700italic|Droid+Sans+Mono:400">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Welcome mrhaki,</h1>
+</div>
+<div id="content">
+<div class="paragraph">
+<p>Today on 04-10-2015, we have a Groovy party!</p>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2016-11-14 21:39:06 +01:00
+</div>
+</div>
+</body>
+</html>
+DoctorTemplate step 3
+DoctorTemplate step 4 :<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.0">
+<title>Welcome jnorthr,</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic|Noto+Serif:400,400italic,700,700italic|Droid+Sans+Mono:400">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Welcome jnorthr,</h1>
+</div>
+<div id="content">
+<div class="paragraph">
+<p>Today on 04-11-2016,
+we have a Groovy party!</p>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2016-11-14 21:39:07 +01:00
+</div>
+</div>
+</body>
+</html>
+DoctorTemplate step 5 :
+DoctorTemplate step 6 :
+DoctorTemplate step 7 - did not provide user in binding so it's not populated in the result :-------------------------------------
+
+DoctorTemplate step 8 :-------------------------------------
+
+DoctorTemplate step 9 :-------------------------------------
+
+DoctorTemplate step 10 :
+-------------------------------------
+DoctorTemplate end of testing
+

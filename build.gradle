@@ -1,0 +1,18 @@
+allprojects {
+  task hello << { task -> println "Hello from build.gradle for $task.project.name" }
+}
+
+subprojects { 
+  repositories {
+     mavenCentral()
+  }
+}
+
+//Common Project specific stuff 
+project(':core') { 
+  
+  apply plugin : "groovy"
+
+  dependencies {
+  }
+}

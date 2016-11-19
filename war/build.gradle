@@ -1,0 +1,35 @@
+apply plugin: "war"
+apply plugin: 'org.akhikhl.gretty'
+
+buildscript {
+  repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local' }
+  }
+
+  dependencies {
+    classpath "org.akhikhl.gretty:gretty:1.2.4"
+  }
+}
+
+dependencies {
+      compile project(':core')
+      //compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.21'
+      //compile group: 'log4j', name:'log4j', version: '1.2.17'
+	  compile "javax.servlet:servlet-api:2.5"
+}
+
+gretty {
+  // Possible servletContainer values are 'jetty7', 'jetty8', 'jetty9', 'tomcat7', 'tomcat8'. Default is 'jetty9'.
+  servletContainer = 'jetty7'	// using jetty7 cos i only have JDK1.6+ and cannot upgrade to 1.7; if you have 1.7 you can try tomcat7
+  scanInterval = 20	// gretty reviews all files within this project folder every xx sec.s e.g. 18 sec.s
+  contextPath = '/'			// root path  for the container
+  // httpsEnabled = true	// not used yet
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.codehaus.groovy:groovy-all:2.4.7'
+    }
+}

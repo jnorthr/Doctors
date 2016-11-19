@@ -1,0 +1,107 @@
+@Grapes([
+    @Grab(group='org.slf4j', module='slf4j-api', version='1.6.1'),
+    @Grab(group='ch.qos.logback', module='logback-classic', version='0.9.28')
+])
+
+import AsciidocTemplate;
+import groovy.text.*;
+import java.util.logging.*;
+// File: LogSlf4j.groovy
+// Add dependencies for Slf4j API and Logback
+import org.slf4j.*
+import groovy.util.logging.Slf4j
+import java.io.*
+
+@Slf4j
+public class AsciidocTemplateEngine extends groovy.text.TemplateEngine
+{
+    String payload="";
+    boolean verbose = false;
+    File fileHandle = null;
+
+    public AsciidocTemplateEngine()
+    {
+        super();
+    } // end of constructor
+
+    public AsciidocTemplateEngine(String payload)
+    {
+        super();
+        this.payload = payload;
+    } // end of constructor
+
+    public AsciidocTemplateEngine(File fileHandle)
+    {
+        super();
+        this.fileHandle = fileHandle;
+        readTemplateFile(fileHandle)
+    } // end of constructor
+
+    public readTemplateFile(File fileHandle)
+    {
+        try
+        {
+            this.payload = this.fileHandle.text; 
+        }
+        catch(IOException e)
+        {
+            throw new Exception(e) {}
+        }
+    } // end of constructor
+
+    public AsciidocTemplateEngine(boolean verbose)
+    {
+        super();
+        this.verbose = verbose;
+    } // end of constructor
+
+
+    // for streaming ...
+    public AsciidocTemplate createTemplate(java.io.Reader reader)
+    {
+    
+    } // end of reader
+    
+
+    // for File access ...
+    public AsciidocTemplate createTemplate(File reader)
+    {
+    
+    } // end of File
+    
+    // for string template text ...
+    public AsciidocTemplate createTemplate(String templateText)
+    {
+    
+    } // end of string
+    
+    // for remote access via URL ...
+    public AsciidocTemplate createTemplate(URL readFrom)
+    {
+    
+    } // end of URL
+    
+
+    // test runs 
+    public static void main(String[] args)
+    {
+        log.info 'starting...'
+
+        AsciidocTemplateEngine engine = new AsciidocTemplateEngine();
+        log.info 'default constructor ok'
+
+        engine = new AsciidocTemplateEngine("Hi kids");
+        log.info 'String constructor ok'
+
+        engine = new AsciidocTemplateEngine(true);
+        log.info 'boolean constructor ok'
+
+        File fh = new File('template.adoc');
+        engine = new AsciidocTemplateEngine(fh);
+        log.info 'File constructor ok'
+
+
+        log.info 'ending...'
+    } // end of main
+    
+} // end of class

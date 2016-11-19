@@ -1,0 +1,106 @@
+// build.gradle for groovyx.caelyf.templating
+
+// Ivy was used by Apache Ant tool; it's repos are non-standard layout
+// unlike the maven std layout
+//import org.apache.ivy.plugins.resolver.URLResolver  
+
+apply plugin: 'groovy'
+apply plugin: 'application'
+
+group = 'org.caelyf'
+mainClassName = "groovyx.caelyf.templating.AsciidocTemplate"
+
+// prepare for gradle 2.0 - wrap defs in project.ext closure
+project.ext {
+	// current Caelyf version
+	caelyfversion = '0.1'
+	groovyVersion = '2.2.1'
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main'
+        }
+    }
+
+    test {
+        groovy {
+            srcDir 'src/test'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+
+    //add repositories for optional dependencies
+    maven { url  "http://repository.jboss.org/maven2/" }
+}
+
+dependencies {
+
+    //compile group: 'org.apache.ivy', name:'ivy', version:'2.1.0'
+    //testCompile group: 'org.apache.ivy', name:'ivy', version:'2.1.0'
+
+    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    //classpath 'org.apache.ivy:ivy:2.1.0'
+
+    testCompile group:'org.spockframework', name:'spock-core', version:'0.7-groovy-2.0'
+    //compile group:'org.slf4j', name:'slf4j-api', version:'1.6.1'
+    //testCompile group:'org.slf4j', name:'slf4j-api', version:'1.6.1'
+    //compile group:'ch.qos.logback', name:'logback-classic', version:'0.9.28'
+}
+
+jar {
+    baseName 'asciidoc'
+    manifest {
+        attributes 'Implementation-Title': 'Caelyf Asciidoc Templating', 'Implementation-Version': caelyfversion
+    }
+    metaInf { from 'src/main/META-INF' }
+}
+
+
+
+/* ----------------------------------------
+apply plugin: 'groovy'
+apply plugin: 'application'
+
+group = 'org.caelyf'
+mainClassName = "groovyx.caelyf.templating.AsciidocTemplate"
+
+// prepare for gradle 2.0 - wrap defs in project.ext closure
+project.ext {
+	// current Caelyf version
+	caelyfversion = '0.1'
+	groovyVersion = '2.2.1'
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main'
+        }
+    }
+
+    test {
+        groovy {
+            srcDir 'src/test'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+
+    //add repositories for optional dependencies
+    maven { url  "http://repository.jboss.org/maven2/" }
+}
+
+dependencies {
+    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    testCompile group:'org.spockframework', name:'spock-core', version:'0.7-groovy-2.0'
+}
+
+-------------------------------------------
+*/

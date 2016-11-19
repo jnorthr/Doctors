@@ -1,0 +1,8 @@
+// filename: RunAsciidoc.groovy see: http://saltnlight5.blogspot.fr/2013/08/how-to-convert-asciidoc-text-to-html.html
+@Grab('org.asciidoctor:asciidoctor-java-integration:0.1.4') 
+import org.asciidoctor.* 
+def asciidoctor = Asciidoctor.Factory.create() 
+def output = asciidoctor.renderFile(new File(args[0]), [:]) 
+println(output);
+// run it: groovy RunAsciidoc.groovy myarticle.txt
+

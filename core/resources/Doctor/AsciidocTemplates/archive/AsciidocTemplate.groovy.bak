@@ -1,0 +1,186 @@
+/*
+@Grapes([
+    @Grab(group='org.slf4j', module='slf4j-api', version='1.6.1'),
+    @Grab(group='ch.qos.logback', module='logback-classic', version='0.9.28')
+])
+----------------
+group:'org.asciidoctor', name:'asciidoctor-java-integration', version:'0.1.4'
+*/
+package groovyx.caelyf.templating
+import groovy.text.*;
+import java.util.logging.*;
+// File: LogSlf4j.groovy
+// Add dependencies for Slf4j API and Logback
+//import org.slf4j.*
+import groovy.util.logging.*
+
+// for asciidoctorj 
+import static org.asciidoctor.Asciidoctor.Factory.create;
+import org.asciidoctor.Asciidoctor;
+
+//@Slf4j
+@Grab(group='org.asciidoctor', module='asciidoctor-java-integration', version='0.1.4')
+@Log
+public class AsciidocTemplate implements groovy.text.Template
+{
+    Asciidoctor asciidoctor = create();
+    String rendered="";
+    org.asciidoctor.Options asciidoctorJOptions=["backend": "html5"]
+
+    def payload="  ";
+    Map binding = [:]
+    //TemplateEngine simple = new SimpleTemplateEngine()
+
+    public AsciidocTemplate()
+    {
+    } // end of constructor
+
+    public AsciidocTemplate(def payload)
+    {
+        this.payload = payload;
+    } // end of constructor
+
+    // use SimpleTemplateEngine to transform the template
+    private Writable process()
+    {
+        def output =             //simple.createTemplate(payload).make(binding)
+        return output as Writable;
+    } // end of make
+
+    Writable make()
+    {
+        //def output = simple.createTemplate(payload);
+        return process();  //output as Writable;
+    } // end of make
+
+    Writable make(Map binding)
+    {
+        this.binding = binding;
+        return process();
+    } // end of make
+
+    // boolean will gover if JSP 'include' statements operate as the first step if includes have ${} var replacements but no HTML
+    // or last if include has HTML and no variable replacements 
+    Writable make(Map makebinding, boolean firstlast)
+    {
+        this.binding = makebinding;
+
+    if (firstlast)
+    {
+            rendered = asciidoctor.render(this.payload, asciidoctorJOptions);
+            this.payload = rendered;
+            return process();
+    }
+    else
+    {
+            //def output = simple.createTemplate(this.payload).make(this.binding)
+            //this.payload = output
+            try {
+                rendered = asciidoctor.render(this.payload, asciidoctorJOptions);
+            }
+            catch(Exception e)
+            {
+                rendered = e.message
+                println "\n\nfailed test 7 :[${e.message}]"
+                println e.printStackTrace();
+            }
+            return rendered as Writable;
+    }
+    } // end of make
+
+
+    public static void main(String[] args)
+    {
+        log.info 'starting...'
+        def txtwith = '''= My Notes About AsciidocTemplate
+${name} <doc.writer@asciidoctor.org>
+v1.0, 2014-01-21 ${new Date()}
+     
+== Sample Groovy Script
+
+This is a sample of some asciidoc text. We can use it as a preliminary test of the ability of asciidoctorj - the Java version of the Ruby tool asciidoc.  
+There is also a name of <%= name%> 
+'''   
+
+        def txtwithout = '''= My Notes About AsciidocTemplate
+jnorthr <doc.writer@asciidoctor.org>
+v1.0, 2014-01-21 
+     
+== Sample Groovy Script
+
+This is a sample of some asciidoc text. We can use it as a preliminary test of the ability of asciidoctorj - the Java version of the Ruby tool asciidoc.  
+There is also a name of jnorthr 
+'''   
+        AsciidocTemplate adt = new AsciidocTemplate();
+        Writable tem = adt.make();
+  /*
+        //def data = new FileWriter('sample1.txt');
+        //tem.writeTo(data);
+        //data.flush(0;
+        //data.close();
+        //def fi = new File('sample1.txt').text
+        print "1. the first sample is empty. The result is "
+        println tem;
+        log.info 'end of test 1'
+        
+
+    try{
+        adt = new AsciidocTemplate(txt);
+        tem = adt.make();
+        println "2. the 2nd sample has some asciidoc. The result is "+tem?.toString();
+    }
+    catch(Exception e) 
+    {
+        log.info 'Test 2 failed with message:'+e.message
+    } // end of catch
+
+        log.info 'end of test 2'
+
+        adt = new AsciidocTemplate(txt);
+        Map map = ['name':'jnorthr']
+        tem = adt.make(map);
+        println "3. the 3rd sample has some asciidoc plus a binding. The result is "+tem?.toString();
+        log.info 'end of test 3'
+
+        adt = new AsciidocTemplate();
+        tem = adt.make(map);
+        println "4. the 4th sample has no text but with a binding. The result is "+tem?.toString();
+        log.info 'end of test 4'
+
+        def f = new File("./resources/template.adoc")
+      println "Setup for Test 5 found filename:"+f.canonicalFile.toString()
+      def adoc = f.text
+        println """
+        ${adoc}
+=================================================================
+
+"""
+        adt = new AsciidocTemplate(adoc);
+        tem = adt.make(map);
+        println "5. the 5th sample has asciidoc text with a binding going thur asciidoctorj. The result is "+tem?.toString();
+        log.info 'end of test 5'
+
+        log.info 'start of test 6 ---------------------------'
+        adt = new AsciidocTemplate(adoc);
+        tem = adt.make(map,true);
+        println "6. the 6th sample has asciidoc text with a binding going thur asciidoctorj. The result is "+tem?.toString();
+        log.info 'end of test 6 --------------------------'
+*/
+
+        log.info 'start of test 7 ---------------------------'
+        //def f = new File("./resources/template.adoc")
+        //def adoc = f.text
+        //def template = new AsciidocTemplate(adoc);
+        def template = new AsciidocTemplate(txtwithout);        
+        org.asciidoctor.Options asciidoctorJOptions=["backend": "html5"]
+       Map map = ['name':'jnorthr']
+        String text = template.make(map,true);
+
+        println "7. the 7th sample has asciidoc text with a binding going thur asciidoctorj. The result is "+text?.toString();
+        log.info 'end of test 7 --------------------------'
+
+
+        log.info 'ending...'
+    } // end of main
+    
+} // end of class

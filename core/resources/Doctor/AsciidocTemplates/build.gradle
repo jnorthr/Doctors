@@ -1,0 +1,82 @@
+apply plugin: 'groovy'
+apply plugin: 'application'
+apply plugin: 'project-report'
+
+defaultTasks 'clean', 'build','run'
+mainClassName = "groovyx.caelyf.templating.AsciidocTemplateEngine"
+
+project.ext {
+	groovyVersion = '2.2.1'
+}
+
+configurations {
+  asciidocDoclet
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile files('libs/caelyf-1.1.2.jar')
+    runtime files('libs/caelyf-1.1.2.jar')
+    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    compile group:'org.asciidoctor', name:'asciidoctor-java-integration', version:'0.1.4'
+    compile "javax.servlet:servlet-api:2.5"
+
+    testCompile group:'org.spockframework', name:'spock-core', version:'0.7-groovy-1.8'
+    testCompile "javax.el:javax.el-api:2.2.4"
+    testCompile "javax.servlet.jsp:jsp-api:2.2"
+    testCompile "junit:junit:4.10"
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main'
+        }
+    }
+
+    test {
+        groovy {
+            srcDir 'src/test'
+        }
+    }
+}
+
+
+// custom tasks for creating source/javadoc jars
+task sourcesJar(type: Jar, dependsOn:classes) {
+     classifier = 'sources'
+     from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn:javadoc) {
+     classifier = 'javadoc'
+     from javadoc.destinationDir
+}
+
+// add javadoc/source jar tasks as artifacts
+artifacts {
+     archives sourcesJar
+     archives javadocJar
+}
+ 
+task myJavadocs(type: Javadoc) {
+  source = sourceSets.main.allJava
+}
+
+task generateApiDocs(type: Javadoc) {
+  source = sourceSets.main.allJava
+  destinationDir = reporting.file("api-docs")
+  options.docletpath = options.docletpath = buildscript.configurations.classpath.files.asType(List)  //  configurations.asciidocDoclet.files.asType(List)
+  options.doclet = "org.asciidoctor.Asciidoclet"
+  //options.addStringOption("jaxrscontext", "http://localhost:8080/myapp")
+  println "generateApiDocs="+options.docletpath
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion "1.11"
+}
+
+

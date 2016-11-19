@@ -1,0 +1,152 @@
+= Groovy Docs - Domain Specific Languages
+Community Documentation <user@groovy.codehaus.org>
+v1.1, 2014-07-01 updated 7 July 2014
+:toc: left
+:toc-title: Notes and Links
+:icons: font
+:linkattrs:
+++++
+<link rel="stylesheet"  href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css">
+++++
+
+
+NOTE: https://raw.githubusercontent.com/groovy/groovy-core/master/src/spec/doc/core-domain-specific-languages.adoc[Github .ADoc Raw Look]
+
+TIP: https://github.com/groovy/groovy-core/tree/master/src/spec/doc[Github Groovy-Core Adocs]
+
+== Improving Groovy Documentation
+
+You can contribute to the improvement of groovy reference materials. Follw http://blog.cacoethes.co.uk/groovyandgrails/contributing-to-the-groovy-documentation/comment-page-1#comment-2842[this] guide to learn how.
+
+== Builders 
+
+Languages must grow and evolve to embrace new ideas, and technologies or they will die. Computer languages are no different. Those languages with the ability to grow and adapt to new ways of working, and new ideas will be here for many years.
+
+Groovy offers developers this ability with a feature we call the 'builder' concept. For more detail, please explore these links:
+
+.Builders And How They Work
+ * http://docs.codehaus.org/display/GROOVY/How+Builders+Work[How Builders Work]
+ * http://groovy.codehaus.org/Builders[Groovy Builders]
+ * http://groovy.codehaus.org/api/groovy/util/BuilderSupport.html[Groovy Builder's Support] - look at the API documents for this abstract class
+
+''''
+
+=== Creating a builder 
+
+http://groovy.codehaus.org/Make+a+builder[How To Make A Builder]
+
+
+
+
+
+==== Meta Builder
+
+Wouldn't it be nice to have a tool to build a builder ? Groovy delivers it with : *MetaBuilder* !
+
+Get more details http://sourceforge.net/projects/groovytools/files/groovytools-builder/[from sourceforge here]. Ok, this idea is a little old and there may be other, more recent solutions, but this one is worth a little research.
+
+===== Setup this tool
+Grab the jar from the sourceforge link above, then include groovytools-builder-x.x.x.jar in your classpath. 
+
+[source, groovy]
+----------
+import groovytools.builder.*
+
+MetaBuilder mb = new MetaBuilder(getClass().getClassLoader())
+----------
+
+TIP: Follow http://groovy.codehaus.org/MetaBuilder[this tutorial] for more details
+
+===== Declare your own domain-specific language
+
+[source, groovy]
+.Define Your DSL
+----------
+class Customer {
+    def name
+    def dateOfBirth
+}
+
+mb.define {
+    customer(factory: Customer) {
+        properties {
+            name()
+            dateOfBirth()
+        }
+    }
+}
+----------
+
+===== Build an object
+
+
+[source, groovy]
+.Make That Object !
+--------------------------------------------------------
+def aCustomer = mb.build {
+    customer {
+        name = 'Guillaume'
+        dateOfBirth  = '25/12/1975'
+    }
+}
+
+println aCustomer.toString();
+--------------------------------------------------------
+
+NOTE: MrHaki offers another approach to http://mrhaki.blogspot.fr/2011/11/groovy-goodness-create-simple-builders.html[make your own builder] using closures.
+
+NOTE: Jeremy Meyer reviews groovy builders http://www.artima.com/weblogs/viewpost.jsp?thread=296081[here] and http://www.artima.com/weblogs/viewpost.jsp?thread=291467[here].
+
+==== BuilderSupport 
+
+This is an abstract set of helper methods plus several implemented methods. As part of the groovy.util package, this BuilderSupport class has node creation features, plus parent/child tracking for more complex hierarchical networks of nodes. Individual nodes are held as 
+
+.Node Composition
+ * One object - a leaf node
+ * One pair of name/value content - either a leaf node or a branch node; the _value_ can be a more complex object
+ * One pair of name/attribute map content  - either a leaf node or a branch node; the _attribute map_ can be a more complex object
+ * One pair of name/attribute map content and a _value_ object  - either a leaf node or a branch node; the _value_ can be a more complex object or a closure
+
+NOTE: http://groovy.codehaus.org/Make+a+builder[Full Examples of NodeBuilder and BuilderSupport ]
+
+[source, groovy]
+.Let's use the *NodeBuilder* from the previous note
+--------------------------------------------------------
+def projectBuilder = new NodeBuilder()
+
+projectBuilder.staff(kind:'technical', groovy:true) {
+  person(x:296,  name:'James', skillset:'java,groovy') {
+    project(name:'payroll')
+    project(name:'websites')
+  }
+  person(x:234,  name:'Sandra', skillset:'groovy,cobol') {
+    project(name:'payroll')
+    project(name:'billing')
+  }
+}
+--------------------------------------------------------
+
+
+==== FactoryBuilderSupport
+
+http://groovy.codehaus.org/FactoryBuilderSupport[How It Works]
+
+=== Existing builders
+
+http://www.ibm.com/developerworks/java/library/j-pg05199/[Building, parsing, and slurping XML with Groovy]
+
+==== MarkupBuilder
+
+http://groovy.codehaus.org/gapi/groovy/xml/MarkupBuilder.html[Markup Builder API]
+
+==== StreamingMarkupBuilder (TBD)
+==== SaxBuilder (TBD)
+==== StaxBuilder (TBD)
+==== DomBuilder (TBD)
+==== NodeBuilder (TBD)
+==== JsonBuilder (TBD)
+==== StreamingJsonBuilder (TBD)
+==== SwingBuilder (TBD)
+==== AntBuilder (TBD)
+==== CliBuilder (TBD)
+==== ObjectGraphBuilder (TBD)

@@ -1,0 +1,73 @@
+// build.gradle for groovyx.caelyf.templating
+// Ivy was used by Apache Ant tool; it's repos are non-standard layout unlike the maven std layout
+import org.apache.ivy.plugins.resolver.URLResolver  
+
+/*
+the failure on apache ivy resolve reports only goes away if you use:
+    groovy group: 'org.apache.ivy', name:'ivy', version:'2.2.0'
+
+how to stop using spock tests as the spock versions needed groovy 2.0 but gradle internal only uses 1.8, so renamed spock tests to .bak
+*/
+
+//apply plugin: 'groovy'
+//apply plugin: 'maven'
+//apply plugin: 'application'
+
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+defaultTasks 'clean', 'build', 'run'
+
+group = 'org.caelyf'
+mainClassName = "groovyx.caelyf.templating.AsciidocTemplateEngine"
+
+// prepare for gradle 2.0 - wrap defs in project.ext closure
+project.ext {
+	caelyfversion = '1.1.2'
+	groovyVersion = '2.2.1'
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main'
+        }
+    }
+
+    test {
+        groovy {
+            srcDir 'src/test'
+        }
+    }
+}
+
+test {  
+    classpath = project.sourceSets.test.runtimeClasspath + files("${projectDir}/lib")  
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal() // searches maven's local repo as Maven famously caches all of its dependencies in the ~/.m2 dir
+
+    //add repositories for optional dependencies
+    maven { url  "http://repository.jboss.org/maven2/" }
+  maven {
+    name = 'JBoss Repo'  //optional name for Sonatype dependencies
+    url = 'https://repository.jboss.org/nexus/content/repositories/releases'
+  }
+}
+
+dependencies {
+    //compile group: 'org.apache.ivy', name:'ivy', version:'2.1.0'
+    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    compile group:'org.asciidoctor', name:'asciidoctor-java-integration', version:'0.1.4'
+    compile group: 'org.apache.ivy', name:'ivy', version:'2.2.0'
+    //testCompile group:'org.spockframework', name:'spock-core', version:'0.7-groovy-2.0'
+
+    testCompile "javax.el:javax.el-api:2.2.4"
+    testCompile "junit:junit:4.11"
+}
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion "1.10"
+}

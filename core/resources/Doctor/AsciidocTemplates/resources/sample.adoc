@@ -1,0 +1,303 @@
+= AsciiDoctor Sample Document
+fred <fred@asciidoctor.org>
+v1.1, 2014-01-31
+
+== Link To A Nice Tutorial
+
+http://saltnlight5.blogspot.fr/2013/08/how-to-convert-asciidoc-text-to-html.html
+
+:description: AsciiDoc is a text document format for writing notes, +
+              documentation, articles, books, slideshows, web pages +
+              and man pages. This is the sample.adoc test script.
+
+== Try A JSP Fragment
+
++++<% include 'header.gtpl' %>+++
+
+A different fragment-->:<%= %>:<--
+
+== Sample Groovy Script
+
+// filename: RunAsciidoc.groovy +
+@Grab('org.asciidoctor:asciidoctor-java-integration:0.1.3') +
+import org.asciidoctor.* +
+def asciidoctor = Asciidoctor.Factory.create() +
+def output = asciidoctor.renderFile(new File(args[0]),  [:]) +
+println(output); +
+
+
+Now you may run it
+
++groovy RunAsciidoc.groovy myarticle.txt+
+
+ //---------------
+ // syntax cheatsheet:
+http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/ This set of notes can be a short-cut to understand how asciidoctor works.
+
+// -----------------
+// ascii doctor gradle plugin
+https://github.com/asciidoctor/asciidoctor-gradle-plugin
+
+ buildscript {
+    repositories {
+        maven {
+            name 'Bintray Asciidoctor repo'
+            url  'http://dl.bintray.com/content/aalmiray/asciidoctor'
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
+    }
+ }
+
+ apply plugin: 'asciidoctor'
+
+'''
+
+== Tutorial
+
+The asciiDoctor tutorial can be found at http://asciidoctor.org/docs/asciidoc-writers-guide/ and offers a world of good tips, nice text layout and many more features. Following text influence how ascii doctor producxes the results. See this :
+
+
+ //------------------------
+ // configure ascii doctor like this:
+
+
+The following options may be set using the task's options property
+
+*    header_footer - boolean
+
+*    template_dir - String
+
+*    template_engine - String
+
+*    compact - boolean
+
+*    doctype - String
+
+*    attributes - Map
+
+Any key/values set on attributes are sent as is to Asciidoctor. You may use this Map to specify an stylesheet for example. The following snippet shows a sample configuration defining attributes
+build.gradle
+
+// append below the line: apply plugin: 'asciidoctor'
+
+ asciidoctor {
+    outputDir = new File("\$buildDir/docs")
+    options = [
+        eruby: 'erubis',
+        attributes: [
+            'source-highlighter': 'coderay',
+            toc: '',
+            idprefix: '',
+            idseparator: '-'
+        ]
+    ]
+ }
+
+To preserve line breaks +
+add a blank and plus sign to the end of a line. It works quite well and you should be able to see from this example, it can be useful.
+
+== Admonitions Follow
+
+What are admonitions ? These are special notes that need some high-lighting to make them noticable to the reader. There are several admonitions and samples of each one follow:
+
+NOTE: This is a note.
+
+TIP: Here is a tip - don't spend it all in one place !
+
+WARNING: A word of warning.
+
+CAUTION: Don't get this one wrong !
+
+IMPORTANT: This is really *important* !
+
+NOTE: Text can appear to be *bold* by placing *'s around a word or phrase.
+
+We can also produce italics by using single quote marks around a 'word' or 'several words'.
+
+We can change the font face of text, say to mono-spaced. Use plus signs around text like this :
++ This is mono-spaced text. +
+
+One hash ( # ) on either side of a word or phrase makes it possible to assign it a role as in CSS classes. #something#
+
+Super-scripts look like this : ^This is a super-script^
+
+while the ~ char makes sub-scripts like 
+
+This ~sub-script~ is a subscript.
+
+== Sample Replacement Variables
+
+There is a use case for the feature to provide external values to a template. Asciidoctor does offer this feature using metadata *within* the asciidoctor environment. But we need to insert external content as well. So name='${name}' should see 'fred' as the name.
+
+== Replacement variables Using Asciidocotor Metadata
+
+*Author*:{author}
+
+*First name*:{firstname}
+
+*Surname*:{lastname}
+
+*Initials*:{authorinitials}
+
+*Email*:{email}
+
+*Revision Date*:{revdate}
+
+*Revision Number*:{revnumber}
+
+*Description*:{description}
+
+== Insert An external Resource
+
+Insertion of external text from another source : {include:resources/sample.txt}
+
+
+== List of Intrinsic Attributes
+
+-{amp}-                 *ampersand (&) character entity*
+
+-{asciidoc-args}-       *used to pass inherited arguments to asciidoc filters*
+
+-{asciidoc-confdir}-    *the asciidoc(1) global configuration directory*
+
+-{asciidoc-dir}-        *the asciidoc(1) application directory*
+
+-{asciidoc-file}-       *the full path name of the asciidoc(1) script*
+
+-{asciidoc-version}-    *the version of asciidoc(1)*
+
+-{author}-              *author's full name*
+
+-{authored}-            *empty string '' if {author} or {email} defined*
+
+-{authorinitials}-      *author initials (from document header)*
+
+-{backend-<backend>}-   *empty string ''*
+
+-{<backend>-<doctype>}- *empty string ''*
+
+*-{backend}-*             document backend specified by `-b` option
+
+*-{backend-confdir}-*     the directory containing the <backend>.conf file
+
+*-{backslash}-*           backslash character
+
+*-{basebackend-<base>}-*  empty string ''
+
+*-{basebackend}-*         html or docbook
+
+*-{blockname}-*           current block name (note 8).
+
+*-{brvbar}-*              broken vertical bar (|) character
+
+-{docdate}-             document last modified date
+
+-{docdir}-              document input directory name  (note 5)
+
+-{docfile}-             document file name  (note 5)
+
+-{docname}-             document file name without extension (note 6)
+
+-{doctime}-             document last modified time
+
+-{doctitle}-            document title (from document header)
+
+-{doctype-<doctype>}-   empty string ''
+
+-{doctype}-             document type specified by `-d` option
+
+-{email}-               author's email address (from document header)
+
+-{empty}-               empty string ''
+
+-{encoding}-            specifies input and output encoding
+
+-{filetype-<fileext>}-  empty string ''
+
+-{filetype}-            output file name file extension
+
+-{firstname}-           author first name (from document header)
+
+-{gt}-                  greater than (>) character entity
+
+-{id}-                  running block id generated by BlockId elements
+
+-{indir}-               input file directory name (note 2,5)
+
+-{infile}-              input file name (note 2,5)
+
+-{lastname}-            author last name (from document header)
+
+-{ldquo}-               Left double quote character (note 7)
+
+-{level}-               title level 1..4 (in section titles)
+
+-{listindex}-           the list index (1..) of the most recent list item
+
+-{localdate}-           the current date
+
+-{localtime}-           the current time
+
+-{lsquo}-               Left single quote character (note 7)
+
+-{lt}-                  less than (<) character entity
+
+-{manname}-             manpage name (defined in NAME section)
+
+-{manpurpose}-          manpage (defined in NAME section)
+
+-{mantitle}-            document title minus the manpage volume number
+
+-{manvolnum}-           manpage volume number (1..8) (from document header)
+
+-{middlename}-         author middle name (from document header)
+
+-{nbsp}-                non-breaking space character entity
+
+-{notitle}-             do not display the document title
+
+-{outdir}-              document output directory name (note 2)
+
+-{outfile}-             output file name (note 2)
+
+-{plus}-                plus character
+
+-{python}-              the full path name of the Python interpreter executable
+
+-{rdquo}-               right double quote character (note 7)
+
+-{reftext}-             running block xreflabel generated by BlockId elements
+
+-{revdate}-             document revision date (from document header)
+
+-{revnumber}-           document revision number (from document header)
+
+-{rsquo}-               right single quote character (note 7)
+
+-{sectnum}-             formatted section number (in section titles)
+
+-{sp}-                  space character
+
+-{showcomments}-        send comment lines to the output
+
+-{title}-               section title (in titled elements)
+
+-{two-colons}-          two colon characters
+
+-{two-semicolons}-      two semicolon characters
+
+-{user-dir}-            the ~/.asciidoc directory (if it exists)
+
+-{verbose}-             defined as '' if --verbose command option specified
+
+-{wj}-                  word-joiner
+
+-{zwsp}-                zero-width space character entity
+
+'''
+
+*The End*
+

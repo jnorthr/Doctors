@@ -1,0 +1,11 @@
+== Sample Include
+
+*Welcome to topic.adoc*
+
+''''
+
+TIP: Hi {name}
+
+''''
+
+http://eddelbuettel.net/groovy/groovy-io.html[GR8 Tutorial]

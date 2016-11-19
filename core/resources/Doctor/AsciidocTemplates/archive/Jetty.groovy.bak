@@ -1,0 +1,65 @@
+// http://sysgears.com/articles/embedding-recent-jetty-in-groovy-using-grape/
+// the jetty Server is part of the java JDK !
+// see: https://wiki.eclipse.org/Jetty/Tutorial/Embedding_Jetty
+
+import org.eclipse.jetty.server.Server
+import org.eclipse.jetty.servlet.*
+import groovy.servlet.*
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.server.handler.*
+import org.eclipse.jetty.webapp.WebAppContext
+
+@Grapes([
+    @Grab(group='javax.servlet', module='javax.servlet-api', version='3.0.1'),
+    @Grab(group='org.eclipse.jetty.aggregate', module='jetty-all-server', version='8.1.8.v20121106', transitive=false)
+])
+public class Jetty
+{
+   def startJetty() {
+    def jetty = new Server(9090)
+    ContextHandlerCollection contexts = new ContextHandlerCollection()
+    jetty.setHandler(contexts)
+     
+    // http://download.eclipse.org/jetty/7.6.14.v20131031/apidocs/org/eclipse/jetty/servlet/ServletContextHandler.html
+    def context = new ServletContextHandler(contexts, '/css/*', ServletContextHandler.SESSIONS)  // Allow sessions.
+    context.resourceBase = './css'  // Look in current dir for Groovy scripts.
+    // context.setResourceBase("../test-jetty-webapp/src/main/webapp");
+    
+    context.setContextPath("/resources");
+    context.addServlet(GroovyServlet, '*.groovy')  // All files ending with .groovy will be served.
+    context.addServlet(TemplateServlet, '*.gtpl')  // All files ending with .gtpl will be served.
+    context.addServlet(org.eclipse.jetty.servlet.DefaultServlet, "/resources");
+    context.setAttribute('version', '1.0')  // Set an context attribute.
+
+    ServletContextHandler staticContent = new ServletContextHandler(contexts,"/images",ServletContextHandler.SESSIONS)
+    staticContent.resourceBase = './images'
+    staticContent.addServlet(DefaultServlet, '/*')
+    
+    ResourceHandler resource_handler = new ResourceHandler();
+    resource_handler.setDirectoriesListed(true);
+    String[] pageList = ["index.html","example.groovy"]      
+    resource_handler.setWelcomeFiles(pageList);
+
+    WebAppContext webapp = new WebAppContext();
+    webapp.setParentLoaderPriority(true);
+    webapp.setContextPath("/WEB-INF");
+    webapp.setWar("./WEB-INF");
+    //server.setHandler(webapp);
+
+    try{
+    jetty.start()
+    jetty.join();
+    }
+    catch(Exception x) {}
+  }
+
+  public static void main(String[] args)
+  {
+        def here = System.getProperty("user.dir");
+        println "Starting Jetty in folder ${here}, press Ctrl+C to stop."
+        Jetty j = new Jetty();
+        j.startJetty();
+        println "--- the end ---"
+  }
+
+} // end of class

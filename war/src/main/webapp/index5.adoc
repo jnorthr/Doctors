@@ -1,0 +1,36 @@
+= Hello World
+:nofooter:
+:noheader:
+:icons: font
+:name: Fred
+:toc: right
+
+include::./src/main/webapp/WEB-INF/includes/top.adoc[]
+
+== Asciidoctor Sample
+
+*Welcome to index.adoc*
+
+''''
+
+TIP: {name} said Hi
+
+''''
+
+http://eddelbuettel.net/groovy/groovy-io.html[GR8 Tutorial]
+
+This is an update again. Now try some Caelyf binding logic for key of app=${app} again.
+
+Local mode is ${localMode} and hasRedis ? =${hasRedis}.
+
+JSP style-syntax for localMode: <%= localMode %>.
+
+''''
+
+include::topic.adoc[]
+
+''''
+
+++++
+include::./src/main/webapp/WEB-INF/includes/footer.html[]
+++++

@@ -1,0 +1,13 @@
+= NOTE: Samples
+jim <jim@work.com>
+
+== Sample1.adoc Nice Tutorial
+
+http://asciidoctor.org/docs/asciidoc-writers-guide/[Writer's Guide]
+
+
+== Samples And References 
+
+We could describe the many features of the asciidoctor syntax, but why bother ? 
+
+See the Doc.s menu option above for more goodies or paste this sample in the box below, then GO !

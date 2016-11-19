@@ -1,0 +1,160 @@
+// class to capture JSP-style syntax within a template text stream
+package groovyx.caelyf.templating.decoder;
+import  groovyx.caelyf.templating.decoder.Cell;
+public class Decoder
+{
+    boolean audit = true;
+    def say(txt)
+    {
+        if (audit)
+        {
+            println txt;
+        } // end of if
+        
+    } // end of say
+    
+    // holds list of JSP-like entries
+    def cells =[]; 
+    
+    // keep list of pointers to each < in the input stream
+    def locations = []
+    
+    // holds template stream being examined
+    String txt="";
+    
+    // pointer to < in input string
+    int i =-1;
+    
+    // pointer to < in input string
+    int j = -1;
+    
+    // should only use constructor where template text is provided
+    private Decoder()
+    {
+    } // end of constructor
+    
+    // template text must be provided here
+    public Decoder(def templateStream)
+    {
+        this.txt = templateStream;
+        int count = 0;
+        
+        finder();
+        locations.each{ix -> 
+            say "\n----------------------------------\nEntry ${++count} found < at: "+ix;
+            findGT(ix);
+        } // end of each
+
+	  analyseCells();
+
+	  rebuildTemplate();
+
+    } // end of constructor
+
+    
+    String toString()
+    {
+        return "i=$i  j=$j "
+    } // end of toString()
+            
+    // locate each < in template stream then remember it's location in the 'locations' list of int's ( pointers to each < char. )
+    private def finder()
+    {
+        txt.eachWithIndex{ ch, i ->
+            if (ch=='<')
+            {
+                locations << i;
+                say "   found < at $i"
+            } // end of if        
+        } // end of each
+ 
+    } // end of finder
+
+
+
+    // locate > following < in string
+    def private findGT(i)
+    {
+        int j = i
+        boolean go = true
+        while ( ++j < txt.size() && go )
+        {
+            if (txt[j] == '>') 
+            {
+                go = false;
+                say "   found > at "+j;
+                String ss = txt.substring(i,j+1)
+                say "   findGT substring="+ss;
+
+                if (j - i > 35)
+                {
+                    Cell c = new Cell(['i':i,'j':j,'jspString': txt.substring(i,j+1) ])
+                    c.setup();
+                    say "\n   Cell ="+c.toString(); 
+                    cells += c;
+                } // end of if
+
+            } // end of if
+        
+        } // end of while
+    
+    } // end of find
+
+    def private analyseCells()
+    {
+	say "\n-----------------"
+	cells.eachWithIndex{ cell, i ->
+		if (cell.validAddress && cell.type==1) 
+		{
+			cell.useThis = true;
+			say "Entry $i has been selected:"+cell.toString();			
+		} // end of if
+
+	} // end of each
+    } // end of method
+
+    // replace eligible JSP entries with their payload	
+    def private rebuildTemplate()
+    {
+	say "\n-----------------\nRebuilding Template"
+	def rebuiltTemplate = "";
+	def left = 0;
+	cells.eachWithIndex{ cell, i -> 
+		if (cell.useThis) 
+		{
+			say "Entry $i has been selected:"+cell.toString();		
+			if (cell.i > -1)
+			{
+				say "left:|"+txt.substring(0,cell.i)+"|"+cell.includePayload+"|"+txt.substring(cell.j+1) 	
+
+
+
+			} // end of if
+
+	
+		} // end of if
+
+
+
+	} // end of each
+
+    } // end of method
+
+
+    // ===============================
+    // main logic
+    public static void main(String[] args)
+    {
+        def sampleTemplate ='''<% include 'C:\\Software\\Groovy\\AsciidocTemplates\\AsciidocTemplates\\resources\\header.gtpl' %>
+
+<h1>VCAP_APPLICATION</h1>
+<pre>
+<%= request.getAttribute('va') %>
+</pre>
+<% include '/WEB-INF/includes/footer.gtpl' %><%forward "/WEB-INF/pages/env.gtpl"%>'''
+        Decoder d = new Decoder( sampleTemplate );
+        
+        println "--- the end ---"
+    } // end of main
+    
+} // end of Class

@@ -1,0 +1,57 @@
+= Hello World
+:icons: font
+:name: Fred
+:toc: right
+
+== Asciidoctor Sample
+
+*Welcome to index.adoc*
+
+''''
+
+TIP: Hi {name}
+
+''''
+
+http://eddelbuettel.net/groovy/groovy-io.html[GR8 Tutorial]
+
+This is an update again. Now try some Caelyf binding logic for key of app=${app} again.
+
+Local mode is ${localMode} and hasRedis ? =${hasRedis}.
+
+JSP style-syntax for localMode: <%= localMode %>.
+
+''''
+
+== *./src/main/webapp/piece.adoc*
+
+include::./src/main/webapp/piece.adoc[]
+
+''''
+
+== part.adoc
+
+include::part.adoc[]
+
+''''
+
+== *src/main/webapp/piece.adoc*
+
+include::src/main/webapp/piece.adoc[]
+
+''''
+
+.src/main/webapp/WEB-INF/groovy/datetime.groovy
+[source,groovy,linenums,options="nowrap"]
+----
+include::src/main/webapp/WEB-INF/groovy/datetime.groovy[]
+----
+<1> Populate date with today's date and time
+
+== Using the *PASS* Asciidoctor macro
+
+pass:[<p>Hi Kids</p>] 
+
+pass:[<p>Hi Kids</p>]
+
+''''

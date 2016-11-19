@@ -1,0 +1,148 @@
+= My Notes About AsciiDoctor
+jnorthr <doc.writer@asciidoctor.org>
+v1.0, 2014-01-01
+
+<% include '/WEB-INF/includes/header.gtpl' %>
+
+<h1>Date / time</h1>
+
+<p>
+    <%
+        log.info "outputing the datetime attribute"
+    %>
+    The current date and time: <%= request.getAttribute('datetime') %>
+</p>
+
+
+== Nice Tutorial
+http://saltnlight5.blogspot.fr/2013/08/how-to-convert-asciidoc-text-to-html.html
+
+== Sample Groovy Script
+
+// filename: RunAsciidoc.groovy +
+@Grab('org.asciidoctor:asciidoctor-java-integration:0.1.3') +
+import org.asciidoctor.* +
+def asciidoctor = Asciidoctor.Factory.create() +
+def output = asciidoctor.renderFile(new File(args[0]),  [:]) +
+println(output); +
+
+
+Now you may run it
+
++groovy RunAsciidoc.groovy myarticle.txt+
+
+ //---------------
+ // syntax cheatsheet:
+http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/ This set of notes can be a short-cut to understand how asciidoctor works.
+
+// -----------------
+// ascii doctor gradle plugin
+https://github.com/asciidoctor/asciidoctor-gradle-plugin
+
+ buildscript {
+    repositories {
+        maven {
+            name 'Bintray Asciidoctor repo'
+            url  'http://dl.bintray.com/content/aalmiray/asciidoctor'
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
+    }
+ }
+
+ apply plugin: 'asciidoctor'
+
+'''
+
+== Tutorial
+
+The asciiDoctor tutorial can be found at http://asciidoctor.org/docs/asciidoc-writers-guide/ and offers a world of good tips, nice text layout and many more features. Following text influence how ascii doctor producxes the results. See this :
+
+
+ //------------------------
+ // configure ascii doctor like this:
+
+
+The following options may be set using the task's options property
+
+*    header_footer - boolean
+
+*    template_dir - String
+
+*    template_engine - String
+
+*    compact - boolean
+
+*    doctype - String
+
+*    attributes - Map
+
+Any key/values set on attributes are sent as is to Asciidoctor. You may use this Map to specify an stylesheet for example. The following snippet shows a sample configuration defining attributes
+build.gradle
+
+// append below the line: apply plugin: 'asciidoctor'
+
+ asciidoctor {
+    outputDir = new File("\$buildDir/docs")
+    options = [
+        eruby: 'erubis',
+        attributes: [
+            'source-highlighter': 'coderay',
+            toc: '',
+            idprefix: '',
+            idseparator: '-'
+        ]
+    ]
+ }
+
+To preserve line breaks +
+add a blank and plus sign to the end of a line. It works quite well and you should be able to see from this example, it can be useful.
+
+== Admonitions Follow
+
+What are admonitions ? These are special notes that need some high-lighting to make them noticable to the reader. There are several admonitions and samples of each one follow:
+
+NOTE: This is a note.
+
+TIP: Here is a tip - don't spend it all in one place !
+
+WARNING: A word of warning.
+
+CAUTION: Don't get this one wrong !
+
+IMPORTANT: This is really *important* !
+
+NOTE: Text can appear to be *bold* by placing *'s around a word or phrase.
+
+We can also produce italics by using single quote marks around a 'word' or 'several words'.
+
+We can change the font face of text, say to mono-spaced. Use plus signs around text like this :
++ This is mono-spaced text. +
+
+One hash ( # ) on either side of a word or phrase makes it possible to assign it a role as in CSS classes. #something#
+
+Super-scripts look like this : ^This is a super-script^
+
+while the ~ char makes sub-scripts like 
+
+This ~sub-script~ is a subscript.
+
+<%= request.server %> and the name is ${map.name}
+
+The End
+
+<h1>Date / time</h1>
+
+<p>
+    <%
+        log.info "outputing the datetime attribute"
+    %>
+    The current date and time: <%= request.getAttribute('datetime') %>
+</p>
+
+<% include '/WEB-INF/includes/footer.gtpl' %>
+
+
+

@@ -1,0 +1,206 @@
+// build.gradle for groovyx.caelyf.templating
+
+/* -----------------------------------------------------------------------
+commented out below !!!
+// Ivy was used by Apache Ant tool; it's repos are non-standard layout
+// unlike the maven std layout
+import org.apache.ivy.plugins.resolver.URLResolver  
+
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'application'
+
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+defaultTasks 'clean', 'build','jar'
+
+group = 'org.caelyf'
+mainClassName = "groovyx.caelyf.templating.decoder.Decoder"
+
+// prepare for gradle 2.0 - wrap defs in project.ext closure
+project.ext {
+	// current Caelyf version
+	caelyfversion = '0.1'
+	groovyVersion = '2.0.1'
+	caelyflogo = "<img src=\"http://caelyf.cfapps.io/images/caelyf-logo.png\">" 
+	reportsLib = "${reporting.baseDir}"	
+	websiteDirApiDir = "${reporting.baseDir}"
+	artifactUrls  = "http://repository.jboss.org/maven2/"
+      doctitle = "Caelyf Asciidoc Templating ${ext.caelyfversion}"
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main'
+        }
+    }
+
+    test {
+        groovy {
+            srcDir 'src/test'
+        }
+    }
+}
+
+compile {  
+    classpath = project.sourceSets.test.runtimeClasspath + files("${projectDir}/lib")  
+}
+test {  
+    classpath = project.sourceSets.test.runtimeClasspath + files("${projectDir}/lib")  
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal() // searches maven's local repo as Maven famously caches all of its dependencies in the ~/.m2 dir
+
+    //add repositories for optional dependencies
+    maven { url  "http://repository.jboss.org/maven2/" }
+  maven {
+    name = 'JBoss Repo'  //optional name for Sonatype dependencies
+    url = 'https://repository.jboss.org/nexus/content/repositories/releases'
+  }
+}
+
+dependencies {
+    compile group: 'org.apache.ivy', name:'ivy', version:'2.1.0'
+    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    compile "javax.servlet:servlet-api:2.5"
+    //compile group:'org.slf4j', name:'slf4j-api', version:'1.6.1'
+    //compile group:'ch.qos.logback', name:'logback-classic', version:'0.9.28'
+
+    testCompile group:'org.spockframework', name:'spock-core', version:'0.7-groovy-2.0'
+
+    testCompile "javax.el:javax.el-api:2.2.4"
+    testCompile "javax.servlet.jsp:jsp-api:2.2"
+    testCompile "junit:junit:4.10"
+}
+
+jar {
+    baseName 'asciidoc'
+    manifest {
+        attributes 'Implementation-Title': 'Caelyf Asciidoc Templating', 'Implementation-Version': caelyfversion
+    }
+    metaInf { from 'src/main/META-INF' }
+}
+
+
+groovydoc {
+    //destinationDir file(websiteDirApiDir)
+    //windowTitle project.ext.doctitle
+    //docTitle project.ext.doctitle
+    header caelyflogo
+    link 'http://java.sun.com/javaee/5/docs/api/', 'javax.servlet.'
+    link 'http://java.sun.com/j2se/1.5.0/docs/api', 'java.,org.xml.,org.xml.'
+    link 'http://groovy.codehaus.org/gapi/', 'org.codehaus.groovy.,groovy.'
+}
+
+
+// custom tasks for creating source/javadoc jars
+task sourcesJar(type: Jar, dependsOn:classes) {
+     baseName 'caelyf'
+     classifier 'sources'
+     from sourceSets.main.allSource
+}
+ 
+task javadocJar(type: Jar) {     //, dependsOn:groovydoc) {
+     baseName 'caelyf'
+     classifier 'javadoc'
+     from websiteDirApiDir
+}
+ 
+// add javadoc/source jar tasks as artifacts
+artifacts {
+     archives sourcesJar
+     archives javadocJar
+}
+
+
+// testing  parameters
+test {
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion "1.9"
+}
+--------------------------------------------------------
+*/
+
+
+apply plugin: 'groovy'
+apply plugin: 'application'
+
+/*
+buildscript {
+    repositories {
+        maven {
+            name 'Bintray Asciidoctor repo'
+            url  'http://dl.bintray.com/content/aalmiray/asciidoctor'
+        }
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
+    }
+}
+
+apply plugin: 'asciidoctor'
+*/
+
+import org.apache.ivy.plugins.resolver.URLResolver  
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+group = 'org.caelyf'
+mainClassName = "groovyx.caelyf.templating.AsciidocTemplate" //.decoder.Decoder"  //.AsciidocTemplate"
+
+// prepare for gradle 2.0 - wrap defs in project.ext closure
+project.ext {
+	// current Caelyf version
+	caelyfversion = '0.1'
+	groovyVersion = '2.2.1'
+}
+
+
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main'
+        }
+    }
+
+    test {
+        groovy {
+            srcDir 'src/test'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    //add repositories for optional dependencies
+    maven { url  "http://repository.jboss.org/maven2/" }
+}
+
+dependencies {
+
+    compile group: 'org.apache.ivy', name:'ivy', version:'2.1.0'
+    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    compile group:'org.asciidoctor', name:'asciidoctor-java-integration', version:'0.1.4'
+    compile group: 'org.apache.ivy', name:'ivy', version:'2.1.0'
+    compile "javax.servlet:servlet-api:2.5"
+    
+    testCompile group:'org.spockframework', name:'spock-core', version:'0.7-groovy-2.0'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion "1.10"
+}

@@ -1,0 +1,428 @@
+//@Grab('org.asciidoctor:asciidoctorj:1.5.0')
+/*
+ * Copyright 2015 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package groovyx.text;
+
+import groovyx.text.*
+import groovy.transform.*;
+
+import groovy.text.GStringTemplateEngine 
+import groovy.text.Template; 
+
+// for asciidoctorj 
+import static org.asciidoctor.Asciidoctor.Factory.create;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Attributes;
+import org.asciidoctor.Options;  
+import org.asciidoctor.SafeMode;  
+
+
+/** 
+ * DoctorTemplate class description
+ *
+ * A class to construct an output, typically html, from a textfile styled in the asciidoctor syntax.
+ */ 
+@Canonical 
+public class DoctorTemplate implements Template
+{
+    /** a specific boolean flag to write additional log stuff */ 
+    boolean debug = false;
+    
+    
+    /** the original text styled in asciidoctor syntax before any internal treatments */ 
+    String originalPayload = "";
+
+
+    /** the revised text styled in asciidoctor syntax as any internal treatments are applied */ 
+    String payload = "";
+
+
+    /** a specific key/value map of things to feed or influence the asciidoctor translation  process */ 
+    Map binding = [:]
+
+
+    /** a specific boolean flag to write additional stuff to the document header and trailer */ 
+    boolean includeHeaderFooter = true;
+    
+    
+    /** a handle on the translation engine */ 
+    Asciidoctor asciidoctor;
+
+
+    /** options to govern the translation process within asciidoctor */ 
+    org.asciidoctor.Options asciidoctorJOptions;
+
+
+    /** attributes or data values to feed the document during the translation process within asciidoctor */ 
+    org.asciidoctor.Attributes attributes;
+
+
+    /** a specific boolean flag to know if there might be some JSP syntax in this stream */ 
+    boolean hasDollarsFlag = false;
+
+
+   /** 
+    * Method to discover JSP stuff.
+    * 
+    * @param string text to be scanned for jsp trigger char. of $
+    * @return true whe at least one $ is in the stream
+    */     
+    public boolean hasDollars(def txt) { return txt.indexOf('${');}
+
+
+   /** 
+    * Default Constructor 
+    * 
+    * @return DoctorTemplate object
+    */     
+    public DoctorTemplate()
+    {
+        setup();
+        say "DoctorTemplate() default constructor called"
+    } // end of default
+ 
+ 
+   /** 
+    * Debug Constructor 
+    * 
+    * @return DoctorTemplate object
+    */     
+    public DoctorTemplate(boolean tf)
+    {
+        debug = tf;
+        setup();
+        say "DoctorTemplate(${tf}) debug constructor called"
+    } // end of default
+ 
+ 
+   /** 
+    * Non-Default Constructor 
+    * 
+    * @param string text to be tranlated to html, etc
+    * @return DoctorTemplate object
+    */     
+    public DoctorTemplate(String tx)
+    {
+        setup();
+        say "DoctorTemplate() received "+tx.size()+" bytes";
+        
+        // call scanner to convert jsp file includes
+        DoctorTemplateScanner dts = new DoctorTemplateScanner();
+        originalPayload = dts.parse(tx);
+        
+        hasDollarsFlag = hasDollars(originalPayload);
+    } // end of non-default
+
+
+   /** 
+    * Method to set payload variable typically done when calling class constructor.
+    * 
+    * @param pl provides text stream to be used in the translation
+    * @return void
+    */     
+    public void setPayload(pl)
+    {
+        // call scanner to convert jsp file includes
+        DoctorTemplateScanner dts = new DoctorTemplateScanner();
+        originalPayload = dts.parse(pl);
+        
+        hasDollarsFlag = hasDollars(originalPayload);
+    } // end of setPayload
+
+
+   /** 
+    * Method to set internal variables.
+    * can turn on/off the asciidoctor generation of html heading+trailer </body></html> bits
+    * 
+    * @param true flag to cause header/trailer components to be included in the translation
+    * @return void
+    */     
+    public void setWrapper(flag)
+    {
+        includeHeaderFooter = flag;
+        asciidoctorJOptions.setHeaderFooter(includeHeaderFooter);
+    } // end of setWrapper
+
+
+   /** 
+    * Convenience Method to suppress generation of header and trailer components.
+    *
+    * will turn off the asciidoctor generation of html heading+trailer </body></html> bits
+    * 
+    * @return void
+    */     
+    public void noWrapper()
+    {
+        setWrapper(false);
+    } // end of noWrapper
+
+
+   /** 
+    * Method to construct handles and set internal variables.
+    *
+    * Prepare org.asciidoctor.Attributes and org.asciidoctor.Options to make an html output by default
+    * 
+    * @return void
+    */     
+    public void setup()
+    {
+        asciidoctor = create();
+        asciidoctorJOptions = new org.asciidoctor.Options();
+
+        attributes = new org.asciidoctor.Attributes();
+        attributes.setIgnoreUndefinedAttributes(true);
+        attributes.setIcons(Attributes.FONT_ICONS);
+        attributes.setBackend("html");
+        asciidoctorJOptions.setAttributes(attributes);
+        asciidoctorJOptions.setHeaderFooter(includeHeaderFooter);
+        asciidoctorJOptions.setSafe(SafeMode.UNSAFE);
+    } // end of setup
+    
+    
+
+   /** 
+    * Method to translate the original text styled in asciidoctor syntax after any internal treatments
+    * 
+    * @return writable stream of text rendered after translation
+    */     
+    Writable make() 
+    {
+        say "DoctorTemplate make() without a binding map"
+        try
+        {
+            this.payload = asciidoctor.render(originalPayload, asciidoctorJOptions);
+            originalPayload = null;
+        }
+        
+        /** Trap any failures from the translation and return them formatted as asciidoctor msgs, these are rendered into */
+        /** the result designated by the backend, typically html */
+        catch(any)
+        {
+            def now = new Date().format('dd-MM-yyyy hh.mm.ss z')
+            this.payload = """= DoctorTemplate Failure to Render Template
+groovyx.text.DoctorTemplate 
+$now
+
+== groovyx.text.DoctorTemplate.make() failed to render(originalPayload, asciidoctorJOptions)
+
+""" + any.message; 
+
+            this.payload = asciidoctor.render(this.payload, asciidoctorJOptions);
+        } // end of catch
+
+        if (!binding) 
+        { 
+            say "---->  make() empty binding"; 
+            Closure c = { Writer out -> out <<  payload };
+            return make([:],c);
+        } 
+        else 
+        { 
+            say "----> make() has binding";
+            return make(binding); 
+        } // end of else
+        
+    } // end of method
+     
+
+
+   /** 
+    * Method to translate the original text styled in asciidoctor syntax after any internal treatments
+    * 
+    * @param binding map of key/values to use for JSP replacements or asciidoctor attribute declarations
+    * @return writable rendered content resulting from the translation
+    */     
+    Writable make(Map binding) 
+    {
+        say "DoctorTemplate make(Map) payload="+this.originalPayload
+        def gstring = new GStringTemplateEngine()
+    
+    
+        /** if $ are in text stream, hide them temporarily */ 
+        if (hasDollarsFlag)
+        {
+            this.originalPayload = this.originalPayload.replace('${', '|{').replace('$', '¬ß').replace('\\', '‚àû');
+            this.originalPayload.replace('|{', '${')
+        
+            say "has Dollars ? "+hasDollarsFlag;
+            say "\n------------------\nmy source=\n------------------\n" +  this.originalPayload
+        } // end of if        
+        
+                    
+                    
+        /** do GStringTemplateEngine ${xx} replacements first */
+        try
+        {
+            this.originalPayload = gstring.createTemplate(originalPayload).make(binding).toString()
+            say "DoctorTemplate make(Map) gstring.createTemplate(originalPayload).make(binding) worked ok"
+
+
+        /** if $ are in text stream, restore them */ 
+            if (hasDollarsFlag)
+            {
+                this.originalPayload = this.originalPayload.replace('‚àû', '\\').replace('¬ß', '$').replace('|{', '${');
+            } // end of if
+        } // end of try
+
+
+        /** Trap any failures from the translation and return them as asciidoctor msgs, these are rendered into */
+        /** the result designated by the backend, typically html */
+    /** if cannot parse out ${} items, just leave the string as original */
+        catch(any)
+        {
+            say "DoctorTemplate caught bad news from GStringTemplateEngine()="+any.message
+            def now = new Date().format('dd-MM-yyyy hh.mm.ss z')
+            this.originalPayload = """= DoctorTemplate Failure
+
+== GStringTemplateEngine Translate Failure
+
+*groovyx.text.DoctorTemplate on $now*
+
+groovyx.text.DoctorTemplate failed gstring.createTemplate(originalPayload).make(binding).toString()
+
+=== Cause:
+
+""" + any.message; ;
+        } // end of catch
+
+
+        /** Passed all prior points that might have failed, so render our text in formatted in backend result */
+        try
+        {
+            this.payload = asciidoctor.render(this.originalPayload, asciidoctorJOptions);
+        }
+
+        /** Trap any failures from the translation and return them as asciidoctor msgs, these are rendered into */
+        /** the result designated by the backend, typically html */
+    /** if cannot parse out ${} items, just leave the string as original */
+        catch(any)
+        {
+            def now = new Date().format('dd-MM-yyyy hh.mm.ss z')
+            this.payload = """= DoctorTemplate Failed to Render Template
+
+== groovyx.text.DoctorTemplate on $now
+
+*groovyx.text.DoctorTemplate failed to render(text, asciidoctorJOptions)*
+
+=== Failure message is:
+
+""" + any.message; 
+
+            this.payload = asciidoctor.render(this.payload, asciidoctorJOptions);
+        } // end of catch
+        
+        
+        Closure c = { Writer out -> out << this.payload };
+        return make(binding,c);
+    } // end of method
+     
+
+   /** 
+    * Method to render input stream into requested backend format
+    * 
+    * @param binding a map
+    * @param template the logic to be run
+    * @return formatted content of the render process
+    */     
+    Writable make(Map binding = [:], Closure template) 
+    {
+        /** first use of template triggers the decode !!! */
+        say "DoctorTemplate make w/ binding + closure"
+
+        /** Use asWritable() to make the closure implement the Writable interface. */
+        def writableTemplate = template.asWritable()
+    
+        /** Assign binding map as delegate so we can access the keys of the maps as properties in the closure context. */
+        writableTemplate.delegate = binding
+    
+        /** Return closure as Writable. */
+        writableTemplate
+    } // end of make
+
+
+
+   /** 
+    * Method to display internal variables.
+    * 
+    * @return formatted content of internal variables
+    */     
+    public String toString()
+    {
+        return """debug=${debug}
+originalPayload=${originalPayload}
+payload=${payload}
+binding=${binding}
+includeHeaderFooter=${includeHeaderFooter}
+asciidoctor=${asciidoctor.toString()}
+asciidoctorJOptions=${asciidoctorJOptions}
+hasDollarsFlag=${hasDollarsFlag}
+"""
+    }  // end of string
+
+
+   /** 
+    * Method to print audit log.
+    * 
+    * @param the text to be said
+    * @return void
+    */     
+    public void say(String txt)
+    {
+        if (debug) println txt;
+    }  // end of method
+    
+   // =====================================================================
+   /** 
+    * Method to run class tests.
+    * 
+    * @param args Value is string array - possibly empty - of command-line values. 
+    * @return void
+    */    
+    public static void main(String[] args)
+    {
+        println("DoctorTemplate starting");
+        println "-----------------------------------"
+        def dr = new DoctorTemplate()
+
+        dr.setWrapper(false);
+        println dr.make().toString()
+        println "-----------------------------------"
+
+        dr = new DoctorTemplate(true)
+        dr.setWrapper(false);
+        println dr.make([:]).toString()
+        println "-----------------------------------"
+        
+        // Use toString() of Writable closure.
+        dr = new DoctorTemplate("= Class Constructor with String\n\nHi kids\n")
+        println dr.make { Writer out -> out << "= Hello world!\n\n== Title One\n\nHi kids" }.toString() //== 'Hello world!'
+        println "-----------------------------------"
+        
+        
+        dr = new DoctorTemplate("= DoctorTemplate\n:linkcss:\n\nThis is a test.");
+        println dr.make([:]).toString()
+        println "-----------------------------------\n"
+
+        dr = new DoctorTemplate("= Simple String");
+        def x = dr.make([:]).toString();
+        x = (x.size()>200)? x.substring(x.size()-200) : x ;
+        println x;
+        println "-----------------------------------\n"
+        
+        println "--- DoctorTemplate end ---"
+    } // end of main    
+} // end of class

@@ -1,0 +1,193 @@
+// class to capture JSP-style syntax within a template text stream
+public class Cell
+{
+    boolean audit = false;
+    def say(txt)
+    {
+        if (audit)
+        {
+            println txt;
+        } // end of if
+        
+    } // end of say
+    
+    // pointer to < in input string
+    int i =-1;
+    
+    // pointer to < in input string
+    int j = -1;
+
+    // true if this entry has been validated to replace the placeholder string
+    boolean useThis = false;
+    
+    // the eligible string like <% include '/WEB-INF/includes/header.gtpl' %>
+    String jspString="";
+
+    int at = -1; // where does keyword start in this string
+    int len = -1; // how long is keyword
+    
+    // replacement types: 0=unknown 1=include 2=forward 3=redirect
+    int type = 0;
+    
+    // in this example:   /WEB-INF/includes/header.gtpl
+    String address = "";
+    
+    // true when 'address' was filled
+    boolean addressFound = false;
+    
+    // true when the 'address' points to an existing resource
+    boolean validAddress = false;
+
+    // if validAddress thne text from that resource is loaded here
+    def includePayload = "";
+    
+    String toString()
+    {
+        String ss = includePayload.substring(0,(includePayload.size() > 5) ? 5 : includePayload.size() ) ;
+        return "i=$i  j=$j useThis=${useThis} string=|${jspString}| at=${at} len=${len} type=${type} address=|${address}| addressFound=${addressFound} validAddress=${validAddress}\nincludePayload=|${ss}... "
+    } // end of toString()
+    
+    // needed at start of Cell constructor to initialze internal values
+    public setup()
+    {
+        has("include ", 1)
+        if (type < 1) {has("forward ", 2)}
+        if (type < 1) {has("redirect ", 3)}
+        findAddress();
+    }// end of setup
+
+    boolean has(String keyword, int kind)
+    {
+        int i = jspString.toLowerCase().indexOf(keyword);
+        if (i > -1)
+        {
+            at = i;
+            type = kind;
+            len = keyword.size();
+        } // end of if
+        return (i > -1) ? true : false;
+    } // end of has
+
+    boolean chkobj(String obj) 
+    {            
+        return new File(obj).exists();
+    } // end of chkobj  
+    
+    // true if a filename points to a file that really exists
+    boolean findAddress()
+    {
+        addressFound = false;
+        String addr = "";
+        address = "";
+        if ( type < 1 ) return addressFound;
+
+        int k = at + len;
+        addr = jspString.substring(k).trim();
+        say "   k=${k} and ss=|${addr}|"
+
+        if (addr.startsWith('\''))
+        {   
+            int m = addr.substring(1).indexOf('\'');
+
+            if (m>0)
+            {
+                address = addr.substring(1,m+1)
+                addressFound = true;
+                validAddress = chkobj(address);
+                if (validAddress)
+                {
+                    includePayload = new File(address).text
+                    say "   --->:"+includePayload+":"
+                } // end of if
+                
+            } // end of if 
+            say "   -> yes \' m=$m addr=|${address}|"
+        } // end of if
+
+        if (addr.startsWith('\"'))
+        {
+            int m = addr.substring(1).indexOf('\"');
+            if (m>0)
+            {
+                addressFound = true;
+                address = addr.substring(1,m+1)
+                validAddress = chkobj(address);
+                if (validAddress)
+                {
+                    includePayload = new File(address).text
+                    say "   --->:"+includePayload+":"
+                } // end of if
+            } // end of if 
+
+            say "   -> yes \' m=$m addr=|${address}|"
+        } // end of if
+        
+        return addressFound;
+    } // end of findAddress
+        
+} // end of Cell
+
+
+at =[]
+txt='''
+<% include 'C:\\Software\\Groovy\\AsciidocTemplates\\AsciidocTemplates\\resources\\header.gtpl' %>
+
+<h1>VCAP_APPLICATION</h1>
+<pre>
+<%= request.getAttribute('va') %>
+</pre>
+<% include '/WEB-INF/includes/footer.gtpl' %><%forward "/WEB-INF/pages/env.gtpl"%>
+'''
+def finder(tx)
+{
+    int i = -1;
+    while( ++i < tx.size() )
+    {
+        if (tx[i]=='<')
+        {
+            println "   found < at $i"
+            at << i;
+        }
+    } // end of while
+} // end of finder
+
+// locate > following < in string
+def findGT(i)
+{
+    int j = i
+    boolean go = true
+    while ( ++j < txt.size() && go )
+    {
+        if (txt[j] == '>') 
+        {
+            go = false;
+            print "   found > at "+j;
+            String ss = txt.substring(i,j+1)
+            println "   findGT substring="+ss;
+
+            if (j - i > 35)
+            {
+                Cell c = new Cell(['i':i,'j':j,'jspString': txt.substring(i,j+1) ])
+                c.setup();
+                println "\n   Cell ="+c.toString(); 
+            } // end of if
+
+        } // end of if
+        
+    } // end of while
+    
+} // end of find
+
+// main logic
+int count = 0;
+finder(txt)
+at.each{e-> 
+    print "\n----------------------------------\nEntry ${++count} found < at: "+e;
+    findGT(e);
+    
+} // end of each
+
+
+
+
+println "--- the end ---"

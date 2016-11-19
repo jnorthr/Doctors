@@ -1,0 +1,178 @@
+// File: core:build.gradle for DoctorProject in the Doctors folder
+apply plugin: 'groovy' // Adds test task
+//apply plugin:'war'
+apply plugin: "com.github.johnrengelman.shadow" // Dark Shadow to create fatUber Jars
+ 
+sourceCompatibility = '1.6'
+targetCompatibility = '1.6'
+ 
+defaultTasks 'clean', 'classes', 'groovydoc', 'jar', 'shadowJar', 'test', 'runDTT', 'runDTST', 'runDT', 'runCT','runDRTEM', 'runEngine', 'runJob' //,'jar'
+// mainClassName = 'groovyx.text.DoctorTemplate'; 
+
+configurations {
+	// Create new dependency configuration
+	// for dependencies to be added in
+	// WAR file and place this dependency on the classpath
+	jarLib.extendsFrom classpath
+    ivy
+}
+
+// project version
+version = "1.0"
+
+
+buildscript {
+    repositories {
+        maven{ 
+        	url 'http://jcenter.bintray.com' 
+		    url "https://plugins.gradle.org/m2/"
+        }
+		mavenCentral()
+    }
+    dependencies 
+    {
+    	classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
+    }
+}
+
+repositories{
+    mavenCentral()
+}
+
+dependencies {
+
+    // Using sfl4j allows us to replace different loggers later, if desired
+    compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.21'
+    compile group: 'log4j', name:'log4j', version: '1.2.17'
+	
+	// better put log4j.properties in the src/main/resources folders 
+	compile 'org.codehaus.groovy:groovy-all:2.4.4'
+    compile 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3' so it runs on jdk6
+    runtime 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3'
+    
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'org.springframework.boot:spring-boot-test:1.4.1.RELEASE'
+    
+    // sfl4j is just a facade for loggers. To actually get logging to work, you need to
+    // tie it in with some actual implementation, e.g., logback
+    // see: http://www.slf4j.org/manual.html
+    compile group: 'ch.qos.logback', name:'logback-core', version: '1.1.7'
+    compile group:'ch.qos.logback', name:'logback-classic', version:'1.1.7'
+    runtime group: 'ch.qos.logback', name:'logback-core', version: '1.1.7'
+    runtime group:'ch.qos.logback', name:'logback-classic', version:'1.1.7'    
+    
+    ivy 'org.apache.ivy:ivy:2.4.0'
+    jarLib 'ch.qos.logback:logback-classic:1.1.2'
+}
+
+ sourceSets {
+	main{
+		groovy {
+			srcDir 'src/main/groovy'
+		}
+	} // end of main
+	test{
+		groovy {
+			srcDir 'src/test/groovy'
+		}
+	} // end of main
+} // end of sourceSets
+
+test {
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
+    testLogging {
+        // Make sure output from standard out or error is shown in Gradle output.
+        showStandardStreams = true
+    }
+}
+
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Project Doctor',  
+            'Implementation-Version': version,
+            'Main-Class': 'groovyx.text.DoctorTemplate'
+    }
+    baseName = 'DoctorTemplateEngine'
+    //from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } } // need this to make a fatJar !!
+    //from { configurations.runtime }
+	//from { configurations.jarLib } // puts ch.qos.* on classpath@runtime
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
+}
+
+        
+task runDTT(type: JavaExec, dependsOn: 'classes') {
+    main = 'groovyx.text.DoctorTemplateTester'
+    classpath = configurations.runtime
+    classpath+=sourceSets.main.runtimeClasspath
+    classpath+=sourceSets.test.runtimeClasspath
+    //classpath+=configurations.jarLib
+    args 'World'
+    systemProperty 'simple.message', 'Hello '
+} // end of run
+
+
+task runDTST(type: JavaExec, dependsOn: 'classes') {
+    main = 'groovyx.text.DoctorTemplateScannerTester'
+    classpath = configurations.runtime
+    classpath+=sourceSets.main.runtimeClasspath
+    classpath+=sourceSets.test.runtimeClasspath
+    args 'World'
+    systemProperty 'simple.message', 'Hello '
+} // end of run
+
+
+task runDT(type: JavaExec, dependsOn: 'classes') {
+    main = 'groovyx.text.DoctorTester'
+    classpath = configurations.runtime
+    classpath+=sourceSets.main.runtimeClasspath
+    classpath+=sourceSets.test.runtimeClasspath
+    classpath+=configurations.jarLib
+    args 'World'
+    systemProperty 'simple.message', 'Hello '
+} // end of run
+
+        
+task runJob(type: JavaExec, dependsOn: 'classes') {
+    main = 'groovyx.text.Doctor'
+    classpath = configurations.runtime
+    classpath+=sourceSets.main.runtimeClasspath
+    classpath+=configurations.jarLib
+    args "${projectDir}/build/resources/main/DSL.adoc"
+} // end of run
+
+task runHelper(type: JavaExec, dependsOn: 'classes') {
+    main = 'groovyx.text.DoctorHelper'
+    classpath = configurations.runtime
+    classpath+=sourceSets.main.runtimeClasspath
+    classpath+=configurations.jarLib
+    args "${projectDir}"
+} // end of runHelper
+
+
+task runCT(type: JavaExec, dependsOn: 'classes') {
+    main = 'groovyx.text.CombinedTest'
+    classpath = configurations.runtime
+    classpath+=sourceSets.main.runtimeClasspath
+    classpath+=sourceSets.test.runtimeClasspath
+    classpath+=configurations.jarLib
+} // end of run
+
+task runDRTEM(type: JavaExec, dependsOn: 'classes') {
+    main = 'groovyx.text.DoctorTemplate'
+    classpath+=sourceSets.main.runtimeClasspath
+} // end of run
+
+task runEngine(type: JavaExec, dependsOn: 'classes') {
+    main = 'groovyx.text.DoctorTemplateEngine'
+    classpath = configurations.runtime
+    classpath+=sourceSets.main.runtimeClasspath
+    classpath+=sourceSets.test.runtimeClasspath
+    classpath+=configurations.jarLib
+    args 'World'
+    systemProperty 'simple.message', 'Hello '
+} // end of run
+

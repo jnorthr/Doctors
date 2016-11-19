@@ -1,0 +1,284 @@
+/*
+ * Copyright 2003-2014 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package groovyx.caelyf.templating;
+
+import groovy.lang.*;
+import groovy.text.TemplateEngine;
+import groovy.text.Template;
+
+// for asciidoctorj 
+import static org.asciidoctor.Asciidoctor.Factory.create;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Attributes;
+import org.asciidoctor.Options;  
+import org.asciidoctor.DocumentHeader;
+import org.asciidoctor.Author;
+import org.asciidoctor.RevisionInfo;
+import java.io.File;
+
+
+public class AsciidocTemplateHelper 
+{
+    // true to get debug info
+    boolean verbose = false;
+
+    // true to get task timer info
+    boolean timerFlag = false;
+    long start_Time
+    def taskName = "";
+
+    // true to force asciidoctorj to produce both header and footer wrappers rather than using
+    // <% include 'header.gtpl' %> etc
+    boolean includeHeaderFooter = true;
+    boolean needHeader = true;
+    boolean keepUnknownPlaceholders = true;
+
+    Asciidoctor asciidoctor;
+    org.asciidoctor.Options asciidoctorJOptions;
+    org.asciidoctor.Attributes attributes;
+
+    boolean hasHeader = false;
+    String payload = "";
+    String rendered = "";
+    String documentTitle = "";
+    String authorName = "";
+    String authorEmail = "";
+    String revisionDate = "";
+    String revisionNumber = "";
+    String revisionReason = "";
+
+    public void say(tx)
+    {
+		if ( isVerbose() )
+		{
+			println tx;
+		} // end of if	
+    } // end of say
+
+
+    public taskTimer(String task)
+    {
+	taskName = task;
+	taskTimer();
+    } // end of taskTimer
+	
+    public taskTimer()
+    {
+	if (timerFlag)
+	{
+		long end_Time = System.currentTimeMillis();
+		def elapsed = (end_Time - start_Time) / 1000;
+		say "--- task ${taskName} took ${elapsed} sec.s"
+	}
+	else
+	{
+		start_Time = System.currentTimeMillis();
+	} // end of if
+
+	timerFlag = !timerFlag;	
+    } // end of taskTimer
+
+
+    public void loadContent(String payload)
+    {
+	this.payload = payload;
+	say "--- loadContent loaded "+this.payload.size()+" bytes"
+    } // end of loadContent
+
+    public void loadContent(File payload)
+    {
+	taskTimer("load file");
+	try
+	{
+		this.payload = payload.text;
+		say "--- loaded "+this.payload.size()+" bytes"
+	}
+	catch (IOException ioe)
+	{
+		this.payload = "== File Missing ?\n\nThe file named ${payload.name} could not be located or accessed"
+	} // end of catch
+
+	taskTimer();
+    } // end of loadContent
+
+
+    // pulls header components from the document title,author, etc. but only after a document has been parsed
+    public void getHeader(String payload)
+    {
+	if (hasHeader)
+	{
+		taskTimer("getHeader()");
+
+		// readDocumentHeader takes input in 3 flavors: String, File, Reader
+		DocumentHeader header = asciidoctor.readDocumentHeader(payload);
+		Author author = header.getAuthor();
+		RevisionInfo revisionInfo = header.getRevisionInfo();
+
+		documentTitle = header.getDocumentTitle();
+		authorName = author.getFullName();
+		authorEmail = author.getEmail();
+		revisionDate = revisionInfo.getDate();
+		revisionNumber = revisionInfo.getNumber();
+		if (revisionInfo.getRemark()!=null)
+		{
+			revisionReason = revisionInfo.getRemark();
+		} // end of if
+
+		if (verbose)
+		{
+		    say("Document Title : "+documentTitle); 
+    		    say("Author Email   : "+authorEmail); 	
+		    say("Author Name    : "+authorName);  
+		
+		    say("Revision Date  : "+revisionDate);
+		    say("Revision Number: "+revisionNumber); 	
+		    say("Revision Reason: "+revisionReason); 	
+		} // end of if
+
+		taskTimer();
+
+	} // end of if
+
+    } // end of method
+
+    public Writer renderToWriter()
+    {
+	String content = render(); 
+	def sw= new StringWriter();
+      content.each{e->
+		sw.write(e);		
+	} // end of each
+
+    } // end of Writer
+
+
+    public String render()
+    {
+		// preserves ${...} text where placeholder name is not a key in the binding
+		attributes.setIgnoreUndefinedAttributes(keepUnknownPlaceholders);
+		attributes.setBackend("html5");
+		asciidoctorJOptions.setAttributes(attributes);
+		
+		asciidoctorJOptions.setHeaderFooter(includeHeaderFooter);
+
+		taskTimer("render");
+
+		rendered = asciidoctor.render(payload, asciidoctorJOptions);
+
+		taskTimer();
+	
+		if ( isVerbose() )
+		{
+			say("\n--- rendered source has ${rendered.size()} bytes --");
+			say(rendered);
+			say("\n--- end of rendered source --");
+		} // end of if
+
+		// post render flag to allow document header attributes to be gathered
+		hasHeader = true;
+
+		if ( needHeader() )
+		{
+			getHeader(payload);
+		} // end of if
+
+		return rendered;
+
+    } // end of setup
+
+	
+    public AsciidocTemplateHelper() 
+    {
+		taskTimer();
+
+		asciidoctor = create();
+		asciidoctorJOptions = new org.asciidoctor.Options();
+		attributes = new org.asciidoctor.Attributes();
+
+		taskTimer();
+    } // end of constructor
+
+
+    /**
+     * @param includeHeaderFooter true if you want the engine to provide document headers and trailers; foe ex.: if backend=html5 result has <html></html> bits around your content
+     */
+    public void setIncludeHeaderFooter(boolean flag) {
+        this.includeHeaderFooter = flag;
+    }
+
+    public boolean includesHeaderFooter() {
+        return includeHeaderFooter;
+    }
+
+
+    /**
+     * @param keepUnknownPlaceholders  true if you want the engine to provide document headers and trailers; foe ex.: if backend=html5 result has <html></html> bits around your content
+     */
+    public void setKeepUnknownPlaceholders(boolean flag) {
+        this.keepUnknownPlaceholders = flag;
+    }
+
+    public boolean keepUnknownPlaceholders() {
+        return keepUnknownPlaceholders;
+    }
+
+    /**
+     * @param verbose true if you want the engine to display the template source file for debugging purposes
+     */
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    /**
+     * @param needHeader true   to gather individual document header attributes after the document is rendered
+     */
+    public void setNeedHeader(boolean flag) {
+        this.needHeader = flag;
+    }
+
+    public boolean needHeader() {
+        return this.needHeader;
+    }
+
+
+    // ----------------------------------------------
+    //
+    public static void main(String[] args)
+    {
+	println("--- Start Of Text For AsciidocTemplateHelper ---");	
+
+	AsciidocTemplateHelper ate = new AsciidocTemplateHelper();
+      String payload = '''= My Notes About AsciiDoctor\njnorthr <doc.writer@asciidoctor.org>\nv1.0, 2014-01-01 \n\n== Heading One\n*This* is it. [${fred}][{fred}]\n<% include '/WEB-INF/includes/header.gtpl' %>''';
+	ate.setVerbose(true);
+	ate.loadContent(payload);
+      ate.setIncludeHeaderFooter(true);
+      ate.setNeedHeader(true);
+      ate.setKeepUnknownPlaceholders(false);
+      ate.render();
+	println "\n---------------------------------\n";
+
+	ate.loadContent(new File("resources/sample.adoc"))
+	ate.setVerbose(true);
+      ate.render();
+
+	println("--- End Of Text For AsciidocTemplateHelper ---");	
+    } // end of main
+
+} // end of class

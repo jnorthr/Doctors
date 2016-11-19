@@ -1,0 +1,113 @@
+@Grapes([
+    @Grab(group='org.jruby', module='jruby-complete', version='1.6.5'),
+    @Grab(group='org.asciidoctor', module='asciidoctor-java-integration', version='0.1.4')
+
+    //@Grab(group='org.slf4j', module='slf4j-api', version='1.6.1'),
+    //@Grab(group='ch.qos.logback', module='logback-classic', version='0.9.28')
+])
+
+package groovyx.caelyf.templating
+import java.util.*;
+import groovy.text.*;
+import groovy.util.logging.*
+import java.io.*
+import groovy.lang.*;
+import static org.asciidoctor.Asciidoctor.Factory.create;
+import org.asciidoctor.Asciidoctor;
+
+@Log
+public class AsciidocTemplateEngine2 extends groovy.text.SimpleTemplateEngine
+{
+    String payload="";
+    boolean verbose = false;
+    File fileHandle = null;
+
+    public AsciidocTemplateEngine2()
+    {
+        super();
+    } // end of default constructor
+
+    public AsciidocTemplateEngine2(boolean verbose)
+    {
+        super(verbose);
+        this.verbose = verbose;
+    } // end of constructor
+
+
+    public AsciidocTemplateEngine2(String payload)
+    {
+        super();
+        this.payload = payload;
+    } // end of constructor
+
+    public AsciidocTemplateEngine2(File fileHandle)
+    {
+        super();
+        this.fileHandle = fileHandle;
+        readTemplateFile(fileHandle)
+    } // end of constructor
+    
+    public readTemplateFile(File fileHandle)
+    {
+        try
+        {
+            this.payload = this.fileHandle.text; 
+        }
+        catch(IOException e)
+        {
+            throw new Exception(e) {}
+        }
+    } // end of constructor
+
+
+    // to make a template ...
+    public Template createTemplate(java.io.Reader reader)
+    {
+        return super.createTemplate(reader)
+    } // end of reader
+    
+    // provide a toString() implementation
+    public String show(Template t)
+    {
+        final out = super.make();
+        
+        // We use a Writer object, can be any Writer e.g. FileWriter.
+        final StringWriter writer = new StringWriter();
+        out.writeTo(writer);
+        System.out.println(writer.toString());
+        
+    } // end of toString
+
+    // ==================================
+    // test runs 
+    public static void main(String[] args)
+    {
+        log.info 'starting...'
+
+        AsciidocTemplateEngine2 engine = new AsciidocTemplateEngine2();
+        log.info 'default constructor ok'
+
+        Template template = engine.createTemplate(new StringReader("hi kids - now use createTemplate"));
+        log.info 'default constructor created template as :'+template.toString();
+        
+        //engine.show(template);
+        
+
+        engine = new AsciidocTemplateEngine2("Hi kids");
+        log.info 'String constructor version works ok'
+        template = engine.createTemplate(new StringReader("hi kids - now use createTemplate from string constructor"));
+        log.info 'string constructor created template as :'+template.toString();
+
+
+        engine = new AsciidocTemplateEngine2(true);
+        log.info 'boolean constructor works ok'
+
+        File fh = new File('./resources/sample.adoc');
+        engine = new AsciidocTemplateEngine2(fh);
+        log.info 'File constructor version works ok'
+
+
+        log.info 'ending...'
+    } // end of main
+    
+} // end of class

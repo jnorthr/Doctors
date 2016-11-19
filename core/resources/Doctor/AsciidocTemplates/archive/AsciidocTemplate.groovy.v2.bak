@@ -1,0 +1,93 @@
+package groovyx.caelyf.templating
+import groovy.text.*;
+
+// for asciidoctorj 
+import static org.asciidoctor.Asciidoctor.Factory.create;
+import org.asciidoctor.Asciidoctor;
+
+//to test without gradle use this grab
+@Grab(group='org.asciidoctor', module='asciidoctor-java-integration', version='0.1.4')
+public class AsciidocTemplate implements groovy.text.Template
+{
+    boolean includeHeaderFooter = true;
+
+    Asciidoctor asciidoctor = create();
+    org.asciidoctor.Options asciidoctorJOptions=["backend": "html","header_footer":includeHeaderFooter]
+
+    def payload="";
+    Map binding = ["backend": "html","header_footer":includeHeaderFooter]
+
+    def attributes = ['backend':'html','header_footer':includeHeaderFooter]     
+
+
+    //Map<String, Object> options = new HashMap<String, Object>();
+    //options.put("attributes", attributes);
+    def options = ['attributes':attributes]
+
+    public AsciidocTemplate()
+    {
+    } // end of constructor
+
+    public AsciidocTemplate(def payload)
+    {
+        this.payload = payload;
+    } // end of constructor
+
+    // use SimpleTemplateEngine to transform the template
+    public Writable process()
+    {
+        def asciidocContent = asciidoctor.render(this.payload, asciidoctorJOptions);  //options);
+        println "output has a class of "+asciidocContent.getClass()
+        println "process() rendered:\n--------------------------------------\n"+asciidocContent+"\n======================================\n\n\n"
+      
+        TemplateEngine engine = new GStringTemplateEngine()
+        Template template = engine.createTemplate(asciidocContent);
+        final Writable out = template.make(binding);
+        //final StringWriter sw = new StringWriter()
+        //out.writeTo(sw);
+        return out;  //sw;
+    } // end of make
+
+    Writable make()
+    {
+        return process();  //output as Writable;
+    } // end of make
+
+    Writable make(Map binding)
+    {
+        this.binding = binding;
+        return process();
+    } // end of make
+
+
+    public static void main(String[] args)
+    {
+        def txt = '''= My Notes About AsciiDoctor
+jnorthr <doc.writer@asciidoctor.org>
+v1.0, 2014-01-01 updated 21 Jan 2014
+
+== Nice Tutorial
+http://saltnlight5.blogspot.fr/2013/08/how-to-convert-asciidoc-text-to-html.html
+
+== Sample Groovy Script
+
+This is a test. My name is ${name} and the last name is <%= surname %>
+'''
+
+        println "------------------------------"
+        Map binding = ['name':'Fred','surname':'Soap','header_footer':false,'backend':'html']
+        AsciidocTemplate adt = new AsciidocTemplate(txt);
+        def out = adt.make(binding); // Writable
+        final StringWriter sw = new StringWriter();
+        out.writeTo(sw);
+        
+        println "------------------------------"
+        println "\n\nThis sample has some asciidoc. The result is \n"+sw;  // tem;  //?.toString();
+
+        println "out has a class of "+out.getClass()
+        println "sw has a class of "+sw.getClass()
+
+        println "--- the end ---"
+    } // end of main
+    
+} // end of class

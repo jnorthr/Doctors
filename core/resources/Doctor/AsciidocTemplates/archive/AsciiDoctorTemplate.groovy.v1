@@ -1,0 +1,29 @@
+package groovyx.caelyf.templating
+import groovy.text.*;
+
+// for asciidoctorj 
+import static org.asciidoctor.Asciidoctor.Factory.create;
+import org.asciidoctor.Asciidoctor;
+
+//to test without gradle use this grab
+@Grab(group='org.asciidoctor', module='asciidoctor-java-integration', version='0.1.4')
+
+    boolean includeHeaderFooter = true;
+
+    Asciidoctor asciidoctor = create();
+    org.asciidoctor.Options asciidoctorJOptions=["backend": "html","header_footer":includeHeaderFooter]
+
+    def payload ='''= My Notes About AsciiDoctor
+jnorthr <doc.writer@asciidoctor.org>
+v1.0, 2014-01-01
+
+== Nice Tutorial
+http://saltnlight5.blogspot.fr/2013/08/how-to-convert-asciidoc-text-to-html.html[Nice Tutorial]
+
+== Sample Groovy Script
+Some text here.
+''';
+
+        def asciidocContent = asciidoctor.render(payload, asciidoctorJOptions);  //options);
+        println "output has a class of "+asciidocContent.getClass()
+        println "process() rendered:\n--------------------------------------\n"+asciidocContent+"\n======================================\n\n\n"

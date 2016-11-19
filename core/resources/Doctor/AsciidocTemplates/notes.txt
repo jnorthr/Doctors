@@ -1,0 +1,49 @@
+/*
+* ==============================================
+// notes !!
+see: https://github.com/asciidoctor/asciidoctorj/issues
+
+javadoc -docletpath C:\Software\Groovy\CaelyfTemplate\template\build\libs\asciidoclet\org\asciidoctor -doclet Asciidoclet -verbose -classpath C:\Software\Groovy\CaelyfTemplate\template\build\libs\asciidoclet.jar *.java   NO !
+
+// try:
+cd /c/Software/Groovy/CaelyfTemplate/template
+$ javadoc -doclet org.asciidoctor.Asciidoclet *.java -docletpath ./build/libs/asciidoclet
+
+see: http://courses.cs.washington.edu/courses/cse341/98au/java/jdk1.2beta4/docs/tooldocs/win32/javadoc.html
+REAL WORLD EXAMPLE
+
+Javadoc has many useful options, some of which are more commonly used than others. Here is effectively the command we use to run javadoc on the Java Core API, using makefile variables (except not all packages to be documented are listed).
+javadoc -sourcepath /jdk/src/share/classes \   /* Path for source files          */
+        -d /jdk/build/api                  \   /* Destination directory          */
+        -use                               \   /* Adds "Use" files               */
+        -splitIndex                        \   /* Splits index A-Z               */
+        -windowtitle $(WINDOWTITLE)        \   /* Adds a window title            */
+        -doctitle $(DOCTITLE)              \   /* Adds a doc title               */
+        -header $(HEADER)                  \   /* Adds running header text       */
+        -bottom $(BOTTOM)                  \   /* Adds text at bottom            */
+        -group $(GROUPCORE)                \   /* Core heading for overview page */
+        -group $(GROUPEXT)                 \   /* Ext heading for overview page  */
+        -overview overview-core.html       \   /* For overview text              */
+        -J-mx180m                          \   /* For 180MB memory               */
+        java.lang java.lang.reflect        \   /* Packages to document           */
+        java.util java.io java.net         \
+        java.applet
+        
+DOCTITLE = 'Java<sup><font size="-2">TM</font></sup> Platform 1.2 Final API Specification'
+WINDOWTITLE = 'Java Platform 1.2 Final API Specification'
+HEADER = '<b>Java Platform 1.2</b><br><font size="-1">Final</font>'
+BOTTOM = '<font size="-1"><a href="http://java.sun.com/cgi-bin/bugreport.cgi">Submit
+    a bug or feature</a><br><br>Java is a trademark or registered trademark 
+    of Sun Microsystems, Inc. in the US and other countries.<br>Copyright 1993-1998    
+    Sun Microsystems, Inc. 901 San Antonio Road,<br>Palo Alto, California, 94303, U.S.A.  
+    All Rights Reserved.</font>'
+GROUPCORE = '"Core Packages" "java.*:com.sun.java.*:org.omg.*"
+GROUPEXT  = '"Extension Packages" "javax.*"'
+If you omit the -windowtitle option, javadoc copies the doc title to the window title. The -windowtitle option would not be needed except for the fact that the doc title contains HTML tags,
+
+If you omit the -footer option, as done here, javadoc copies the header text to the footer.
+
+Other important options are -classpath and -link.
+
+*/
+

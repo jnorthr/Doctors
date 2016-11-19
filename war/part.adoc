@@ -1,0 +1,5 @@
+''''
+
+IMPORTANT:  This is part.adoc syntax from war root
+
+''''

@@ -1,0 +1,30 @@
+= My Notes About AsciiDoctor
+${name} <doc.writer@asciidoctor.org>
+v1.0, 2014-01-01 updated ${new Date().format('EEE dd MMM yyyy zz @ hh:mm:ss')}
+
+
+== Nice Tutorial
+http://saltnlight5.blogspot.fr/2013/08/how-to-convert-asciidoc-text-to-html.html
+
+== Sample Groovy Script
+
+// filename: RunAsciidoc.groovy +
+@Grab('org.asciidoctor:asciidoctor-java-integration:0.1.3') +
+import org.asciidoctor.* +
+def asciidoctor = Asciidoctor.Factory.create() +
+def output = asciidoctor.renderFile(new File(args[0]),  [:]) +
+println(output); +
+
+
+Now you may run it
+
++groovy RunAsciidoc.groovy myarticle.txt+
+
+
+The following options may be set using the task's options property
+
+*    header_footer - boolean
+
+*    template_dir - String
+
+*    template_engine - String

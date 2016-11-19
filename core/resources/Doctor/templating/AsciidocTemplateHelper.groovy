@@ -1,0 +1,436 @@
+/*
+ * Copyright 2003-2014 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Typical Method Calling Sequence
+ * 1. AsciidocTemplateHelper ath = new AsciidocTemplateHelper();
+ * 2. loadContent() as either a string or file; this is the payload text styled in the asciidoctor format
+ * 3. loadBinding() - optional map of k/v pairs to populate replacement variables within the payload; defaults to [:] 
+ * 4. set/reset Asciidoctor Options and Attributes
+ * 5. getRendered() returns string resulting from applying binding to payload then sent thru asciidoctorj engine
+ * 6. writeTo(File) or sendToWriter() direct the rendered results to a destination
+ * 7. getMetadata() - optional - retrieve metadata about the parsed document like author,etc
+ * 8. produce render log file - optional -
+ * 9. reset() - optional when only a single document is parsed, else resets the engine to prepare for the next document
+ *
+ */
+
+package groovyx.caelyf.templating;
+
+import groovy.lang.*;
+
+// for asciidoctorj 
+import static org.asciidoctor.Asciidoctor.Factory.create;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Attributes;
+import org.asciidoctor.Options;  
+import org.asciidoctor.DocumentHeader;
+import org.asciidoctor.Author;
+import org.asciidoctor.RevisionInfo;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import groovy.text.SimpleTemplateEngine;
+
+public class AsciidocTemplateHelper 
+{
+    StringBuffer helperLog = new StringBuffer(16384);
+    
+    // true to get task timer info
+    boolean timerFlag = false;
+    long start_Time
+    def taskName = "";
+
+
+    // declare necessaries
+    Asciidoctor asciidoctor;
+
+    // options to govern translation process within asciidoctor
+    org.asciidoctor.Options asciidoctorJOptions;
+    org.asciidoctor.Attributes attributes;
+
+    // false until the document has been parsed
+    boolean documentParsed = false;
+
+    // class to keep document metadata after render has been done
+    DocumentMetaData dmd = new DocumentMetaData();
+
+    // temporary work variables
+    private payload = "";
+    private String rendered = "";
+    private binding = [:]
+
+    public void say(tx)
+    {
+        helperLog.append("+");
+        helperLog.append(tx);
+        helperLog.append("+  + \n");
+        
+        if ( isVerbose() )
+        {
+            println tx;
+        } // end of if    
+    } // end of say
+
+    // provide task name to track - optional; but call this first if using timings
+    public taskTimer(String task)
+    {
+	taskName = task;
+    	taskTimer();
+    } // end of taskTimer
+    
+
+    // keep track of timings for log and/or stats; toggles timerFlag for each execution, so first time thru will start the timer
+    // 2nd time thru this task, ends timer, resets flag and prints time stats in sec.s
+    public taskTimer()
+    {
+    if (timerFlag)
+    {
+        long end_Time = System.currentTimeMillis();
+        def elapsed = (end_Time - start_Time) / 1000;
+        say "task ${taskName} took ${elapsed} sec.s"
+    }
+    else
+    {
+        start_Time = System.currentTimeMillis();
+    } // end of if
+
+    timerFlag = !timerFlag;    
+    } // end of taskTimer
+
+
+	// prepare for next document
+    public void reset()
+    {
+	helperLog.setLength(0); 
+	dmd = new DocumentMetaData();
+	timerFlag = false;
+	documentParsed = false;
+
+	payload = "";
+    	rendered = "";
+    	binding = [:]
+      asciidoctorJOptions = new org.asciidoctor.Options();
+      attributes = new org.asciidoctor.Attributes();	
+    } // end of reset
+
+
+    // get asciidoctor payload with our replacement ${vars} converted 
+    // and contained in the selected backend for the AsciidoctorEngine
+    String getRenderedPayload() 
+    {
+		if (!documentParsed)
+		{
+			rendered = render();
+		} // end of if	
+
+		return rendered;
+    } // end of getRenderedPayload
+
+
+    // get asciidoctor payload with our replacement ${vars} converted
+    String getPayload()
+    {
+    	def transform = "";
+		try{
+			 transform = new SimpleTemplateEngine().createTemplate( this.payload ).make( binding ).toString();
+	 	}
+	 	catch(Exception x)
+	 	{
+	 		transform = "* Transform failure in getPayload() : ${x.toString()}*"
+	 	}
+    } // end of getPayload
+
+
+    // hold variable binding map to be sent thru asciidoctor
+    public void loadBinding(binding)
+    {
+	    this.binding = binding;
+    } // end of loadBinding
+
+
+    // gather text to be sent thru asciidoctor
+    public void loadContent(String payload)
+    {
+	    this.payload = payload;
+    	    say "loadContent loaded "+this.payload.size()+" bytes"
+    } // end of loadContent
+
+
+    // get text from external file we cna feed to asciidoctor
+    public void loadContent(File payload)
+    {
+		taskTimer("load file "+payload.name);
+    	try
+    	{
+    	  	this.payload = payload.text;
+      		say "loaded "+this.payload.size()+" bytes"
+    	}
+		catch (IOException ioe)
+    	{
+    	  	this.payload = "== File Missing ?\n\nThe file named ${payload.name} could not be located or accessed"
+      		say this.payload
+    	} // end of catch
+
+		taskTimer();
+    } // end of loadContent
+
+
+    // Get Document Metadata
+    // pulls header components from the document title,author, etc. but only after a document has been parsed
+    public DocumentMetaData getHeader()
+    {
+	    if (documentParsed)
+    	{
+	    	taskTimer("getHeader()");
+
+        	// readDocumentHeader takes input in 3 flavors: String, File, Reader
+        	DocumentHeader header = asciidoctor.readDocumentHeader(getPayload());
+      		Author author = header.getAuthor();
+	      	RevisionInfo revisionInfo = header.getRevisionInfo();
+
+        	dmd.available = true;
+        	dmd.documentTitle = header.getDocumentTitle() ? header.getDocumentTitle():"";
+        	dmd.authorName = author.getFullName() ? author.getFullName() : "" ;
+        	dmd.authorEmail = author.getEmail() ? author.getEmail() : "";
+        	dmd.revisionDate = revisionInfo.getDate() ? revisionInfo.getDate() : "";
+        	dmd.revisionNumber = revisionInfo.getNumber() ? revisionInfo.getNumber() : "";
+        	dmd.revisionReason = revisionInfo.getRemark() ? revisionInfo.getRemark() : "";
+
+	      	taskTimer();
+	    } // end of if
+
+          return dmd;
+
+    } // end of method
+
+    // useful helper methods, wanted to return a writable but dunno how
+    public Writer sendToWriter(String content)
+    {
+        def sw= new StringWriter();
+        content.each{e->
+              sw.write(e);        
+    } // end of each
+
+    return sw;
+    } // end of Writer
+
+
+    // send rendered document to an external file
+    public writeToFile(StringWriter sw, String filename)
+    {
+        try 
+        {
+            if ( new File(filename).exists() ) { new File(filename).delete(); }
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filename, true)));
+            out.println(sw.toString());
+            out.close();
+            say "written to file :"+filename
+        } 
+        catch (IOException e) 
+        {
+            def msg = "Failed to write file named "+filename+" because "+e.message; 
+            say msg;
+        } // end of catch
+    } // end of Writer
+
+
+    // translate the input text from asciidoctor format into the format declared by the 'backend', i.e. html,docbook
+    // prior loadContent will have placed text into 'payload' variable
+    private render()
+    {
+        // preserves ${...} text where placeholder name is not a key in the binding
+        attributes.setIgnoreUndefinedAttributes(dmd.keepUnknownPlaceholders);
+        attributes.setBackend(dmd.asciiDoctorBackendChoice);
+        attributes.setTableOfContents(true);
+        attributes.setIcons(Attributes.IMAGE_ICONS);
+        attributes.setDataUri(true);
+
+        // attribute("icons", "")
+        asciidoctorJOptions.setAttributes(attributes);
+        
+        // do you want extra html wrappers <html>...</html> around the result ?
+        asciidoctorJOptions.setHeaderFooter(dmd.includeHeaderFooter);
+        dmd.processedDate = new Date();
+        
+        taskTimer("render");
+
+        try
+        {
+            rendered = asciidoctor.render(getPayload(), asciidoctorJOptions);
+        }
+        catch (Exception e)
+        {
+            def msg = "\nRender() failed with message:"+e.message;
+		rendered = msg;
+            say(msg);
+        }
+        
+        taskTimer();
+        say("rendered source has ${rendered.size()} bytes");
+        say(rendered);
+        say("end of rendered source");
+
+        // post-render flag to know if document header attributes might be gathered if necessary
+        documentParsed = true;
+
+        // capture document metadata ?
+        if ( needHeader() )
+        {
+            getHeader( );
+        } // end of if
+
+        return rendered;
+
+    } // end of setup
+
+
+    // class default constructor    
+    public AsciidocTemplateHelper() 
+    {
+        taskTimer("class constructor");
+
+        asciidoctor = create();
+        asciidoctorJOptions = new org.asciidoctor.Options();
+        attributes = new org.asciidoctor.Attributes();
+
+        taskTimer();
+    } // end of constructor
+
+
+    /**
+     * @param includeHeaderFooter true if you want the engine to provide document headers and trailers; for ex.: if backend=html5 result will include <html></html> bits around your content
+     */
+    public void setIncludeHeaderFooter(boolean flag) {
+        dmd.includeHeaderFooter = flag;
+    }
+
+    public boolean includesHeaderFooter() {
+        return dmd.includeHeaderFooter;
+    }
+
+
+    /**
+     * @param keepUnknownPlaceholders  true if you want the render method to preserve unknown placeholders
+     */
+    public void setKeepUnknownPlaceholders(boolean flag) {
+        dmd.keepUnknownPlaceholders = flag;
+    }
+
+    public boolean keepUnknownPlaceholders() {
+        return dmd.keepUnknownPlaceholders;
+    }
+
+    /**
+     * @param choice Which ascii doctor output format to produce; defaults to html5 syntax for output
+     */
+    public void setBackend(String choice) {
+        dmd.asciiDoctorBackendChoice = choice;
+    }
+
+    public String getBackendChoice() {
+        return dmd.asciiDoctorBackendChoice;
+    }
+
+
+    /**
+     * @param verbose true if you want the engine to display the template source file for debugging purposes
+     */
+    public void setVerbose(boolean verbose) {
+        dmd.verbose = verbose;
+    }
+
+    public boolean isVerbose() {
+        return dmd.verbose;
+    }
+
+    /**
+     * @param needHeader True gathers individual document header attributes after the document is rendered
+     */
+    public void setNeedHeader(boolean flag) {
+        dmd.needHeader = flag;
+    }
+
+    public boolean needHeader() {
+        return dmd.needHeader;
+    }
+
+    /**
+     * @param none Returns DocumentMetaData filled with the metadata related to the most recently parsed asciidoc text
+     */
+    public DocumentMetaData getMetadata()
+    {
+    	return dmd;
+    } 
+
+    // ----------------------------------------------
+    //
+    public static void main(String[] args)
+    {
+      println("--- Start Of Text For AsciidocTemplateHelper ---");    
+
+      AsciidocTemplateHelper ath = new AsciidocTemplateHelper();
+      String payload = '''= My Notes About AsciiDoctor\n <doc.writer@asciidoctor.org>\nv1.0, 2014-01-01 \n\n== Heading One\n*This* is it. [${name}][{author}]\n+++<% include '/WEB-INF/includes/header.gtpl' %>+++ ''';
+      ath.setVerbose(true);
+      ath.loadContent(payload);
+      ath.setIncludeHeaderFooter(true);
+      ath.setKeepUnknownPlaceholders(false);
+      def tx = ath.getRenderedPayload();
+
+      // get a StringWriter
+      def txou = ath.sendToWriter(tx);
+
+      // dump content of StringWriter to an output file
+      println "send results to an output file named resources/demo.html"
+      ath.writeToFile(txou, "resources/demo.html")
+
+      println """---------------------------------
+Document Metadata follows:
+${ath.getMetadata()}
+---------------------------------
+
+----------------------------
+Dump Log
+"""
+    AsciidocTemplateHelperLog log5 = new AsciidocTemplateHelperLog(ath.helperLog.toString(), ath.dmd);
+    ath.reset();
+
+    ath.loadContent(new File("resources/sample.adoc"))
+    ath.loadBinding(['name':'fred']);
+    ath.setIncludeHeaderFooter(true);
+    ath.setNeedHeader(true);
+    
+    def rendered = ath.getRenderedPayload();
+
+    // get a StringWriter
+    def ou = ath.sendToWriter(rendered);
+
+    // dump content of StringWriter to an output file
+    println "send results to an output file named resources/sample.html"
+    ath.writeToFile(ou, "resources/sample.html")
+
+    println """
+Document Metadata follows:
+${ath.getMetadata()}
+
+----------------------------
+Dump Log
+"""
+    AsciidocTemplateHelperLog athl = new AsciidocTemplateHelperLog(ath.helperLog.toString(), ath.dmd);
+
+    println "produced log file named :"+athl.logName;
+
+    println("--- End Of Text For AsciidocTemplateHelper ---");    
+    } // end of main
+
+} // end of class

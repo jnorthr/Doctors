@@ -1,0 +1,76 @@
+// org.ajoberstar.grgit uses JDK7
+// This gradle script allows us to publish this repo to GitHub
+
+// cd /Users/jim/Dropbox/Projects/Doctors
+// gradlew -b github.gradle run
+
+apply plugin: 'application'
+apply plugin: 'groovy'
+apply plugin: 'java'
+
+//defaultTasks 'run'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.ajoberstar:grgit:1.6.0'
+    }
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  jcenter()
+}
+
+
+dependencies {
+	//compile 'org.ajoberstar:gradle-git:1.6.0'
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3' 1.5.0 runs on jdk6
+    runtime 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3'
+
+    // Using sfl4j allows us to replace different loggers later, if desired
+    compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.21'
+    compile group: 'log4j', name:'log4j', version: '1.2.17'
+
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'org.springframework.boot:spring-boot-test:1.4.1.RELEASE'
+}
+
+
+ext{
+	git = org.ajoberstar.grgit.Grgit.open(file('.'))
+	git.with{
+		commit = git.commit(message: 'add github script')
+		revision = "1.0.1.${git.head().abbreviatedId}"
+		git.push()
+	}
+}	
+
+final GradleVersion gradleVersion = GradleVersion.current()
+applicationName = 'Doctors'
+mainClassName= 'groovyx.text.DoctorTemplate'
+version = '1.0.0'
+
+// Customize applicationDistribution
+// CopySpec from application plugin extension.
+applicationDistribution.with {
+    from("${projectDir}/src/dist") {
+        include 'VERSION'
+        expand(
+            buildDate: new Date(),
+            // Use revision with Git commit id:
+            revision : revision,
+            version  : project.version,
+            directory: projectDir,
+            docsDir  : docsDir,
+            reportsDir: reportsDir,
+            appName  : applicationName,
+            gradleVer   : gradleVersion.version)
+    }
+}
+ 
+assemble.dependsOn installDist

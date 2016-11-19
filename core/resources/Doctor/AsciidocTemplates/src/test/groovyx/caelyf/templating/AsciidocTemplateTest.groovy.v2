@@ -1,0 +1,375 @@
+/* --- 
+Had to disable slf4j when converting to gradle build file as i could not find an
+acceptable config to make gradle happy enough to allow slf4j to be used, so dropped back
+to @Log but also added a gradle dependency for spock as:
+testCompile group:'org.spockframework', name:'spock-core', version:'0.7-groovy-2.0'
+@Grapes([
+    @Grab(group='org.slf4j', module='slf4j-api', version='1.6.1'),
+    @Grab(group='ch.qos.logback', module='logback-classic', version='0.9.28'),
+    @Grab(group='org.spockframework', module='spock-core', version='0.7-groovy-2.0')
+])
+
+
+see: http://marxsoftware.blogspot.fr/2011/05/easy-groovy-logger-injection-and-log.html
+for more logging tips
+---
+*/
+
+package groovyx.caelyf.templating
+
+import spock.lang.*
+//import java.util.logging
+
+// File: LogSlf4j.groovy
+// Add dependencies for Slf4j API and Logback
+//import org.slf4j.*
+import groovy.util.logging.*
+import groovy.text.*;
+import groovy.util.logging.Log
+
+//@Slf4j
+@Log('templating')
+public class AsciidocTemplateTest extends Specification
+{
+    //Logger log = Logger.getLogger("")
+
+    def static tasks = 0;
+    def setup() { tasks+=1; println "setup() running for test ${tasks}";  }          // run before every feature method
+
+    def cleanup() {println "cleanup running\n\n";  }        // run after every feature method
+
+    def setupSpec() {  println "// run before the first feature method" }     // run before the first feature method
+    def cleanupSpec() { println "// run after the last feature method; task count was ${tasks}\n\n" }   // run after the last feature method
+
+    def "construct empty Asciidoc Template instance"()
+    {
+        given: "make an empty template instance"
+            AsciidocTemplate adt;
+            
+        when: "create object"
+            adt = new AsciidocTemplate();
+            
+        then: "instance should be created"
+            assert adt != null, "instance was null";
+            assert adt instanceof Template, "instance was not a Template";
+    } // end of fixture
+
+
+    def "construct Asciidoc Template instance with text"()
+    {
+        given: "make a template instance with text"
+            AsciidocTemplate adt;
+            
+        when: "create object with text"
+            adt = new AsciidocTemplate("hi kids");
+            
+        then: "instance should be created"
+            assert adt != null, "template not created";
+            assert adt instanceof Template, "instance was not a Template";
+    } // end of fixture
+
+    def "make AsciidocTemplate instance with text"()
+    {
+        given: "make a template instance with text"
+            AsciidocTemplate adt = new AsciidocTemplate("hi kids");;
+            Writable tem = null;
+             
+        when: "make a template with text"
+            tem = adt.make();
+
+        then: "instance should be created"
+            assert tem != null, "Writable not created";
+            assert tem instanceof Writable, "instance was not a Writable object";
+    } // end of fixture
+
+    def "make AsciidocTemplate instance with no text"()
+    {
+        given: "make a template instance with text"
+            AsciidocTemplate adt = new AsciidocTemplate("");;
+            Writable tem = null;
+            
+        when: "make a template with text"
+            tem = adt.make();
+
+        then: "instance should be created"
+            assert tem != null, "Writable not created";
+            assert tem instanceof Writable, "instance was not a Writable object";
+    } // end of fixture
+
+    def "make AsciidocTemplate instance with no text and a map"()
+    {
+        given: "make a template instance without but with a map"
+            AsciidocTemplate adt = new AsciidocTemplate("");
+            Map map = ['name':'jnorthr']
+            Writable tem = null;
+             
+        when: "make a template with no text but a map"
+            tem = adt.make(map);
+            
+        then: "empty template created"
+            assert tem != null, "Writable not created";
+            assert tem instanceof Writable, "instance was not a Writable object";
+            assert tem.toString()!=" ","template should not have any text"
+    } // end of fixture
+
+
+    def "make AsciidocTemplate instance with one blank as text and a map"()
+    {
+        given: "make a template instance with one space and with a map"
+            AsciidocTemplate adt = new AsciidocTemplate(" ");
+            Map map = ['name':'jnorthr']
+            Writable tem = null;
+             
+        when: "make a template with no text but a map"
+            tem = adt.make(map);
+            
+        then: "empty template created"
+            assert tem != null, "Writable not created";
+            assert tem instanceof Writable, "instance was not a Writable object";
+            assert tem.toString()==" ","template should have one blank space"
+    } // end of fixture
+
+
+    // ---------------------
+    def "make AsciidocTemplate instance with some simple text and a map"()
+    {
+        given: "make a template instance with simple text and a map"
+            AsciidocTemplate adt = new AsciidocTemplate("fred");
+            Map map = ['name':'jnorthr']
+            Writable tem = null;
+             
+        when: "make a template with text and a map"
+            tem = adt.make(map);
+            String ans = tem.toString(); println "<${ans}>"
+            
+        then: "non-empty template created"
+            assert tem != null, "Writable not created";
+            assert tem instanceof Writable, "instance was not a Writable object";
+            assert ans=="fred","template should have one blank space"
+    } // end of fixture
+
+
+    // ---------------------
+    @Unroll
+    def "test Template generation with text value [#value]==[#result] "()
+    {
+        AsciidocTemplate adt;
+        setup:
+            Map map = ['name':'fred']
+            adt = new AsciidocTemplate(value);
+            Writable tem = adt.make(map);
+
+        expect:
+            println "Task ${AsciidocTemplateTest.tasks} expects new AsciidocTemplate(${value})==<${result}>"
+            assert result == tem.toString();
+                    
+        where:
+            value       |    result
+            ""          |    ""
+            " "         |    " "
+            "fred"      |    "fred"
+            " fred"     |    " fred"
+            "fred "     |    "fred "
+            " fred "    |    " fred "
+            " hi kids "    |    " hi kids "
+            " name is fred "    |    " name is fred "
+    } // end of fixture
+
+    def "test Template generation with \$binding"()
+    {
+        given:  "make a template with a binding variable in the text and a map"
+            AsciidocTemplate adt = new AsciidocTemplate("My name is \${name}"); // escape dollar sign to get thru groovy compiler
+            Map map = ['name':'jnorthr']
+            Writable tem = null;
+             
+        when: "binding variable is passed to make method"
+            tem = adt.make(map);
+            String ans = tem.toString(); 
+
+        then: "result template should contain replaced value from binding map"
+            println "Test ${AsciidocTemplateTest.tasks} found ans="+ans;
+            assert ans=="My name is ${map.name}","template should have one replacement value"
+        
+    } // end of fixture
+
+    def "test Template generation with JSP binding"()
+    {
+        given:  "make a template with a binding variable in the text and a map"
+            AsciidocTemplate adt = new AsciidocTemplate("My name is <%= name %>"); // escape dollar sign to get thru groovy compiler
+            Map map = ['name':'jnorthr']
+            Writable tem = null;
+             
+        when: "binding variable is passed to make method"
+            tem = adt.make(map);
+            String ans = tem.toString(); 
+
+        then: "result template should contain replaced value from binding map"
+            println "Test ${AsciidocTemplateTest.tasks} found ans="+ans;
+            assert ans=="My name is jnorthr","template should have one replacement value"
+        
+    } // end of fixture
+
+
+    def "test Template generation with JSP binding for a more complex name"()
+    {
+        given:  "make a template with a JSP binding variable in the text and a map"
+            AsciidocTemplate adt = new AsciidocTemplate("My name is <%= name %>"); // escape dollar sign to get thru groovy compiler
+            Map map = ['name':'Le Roy Brown']
+            Writable tem = null;
+             
+        when: "binding variable is passed to make method"
+            tem = adt.make(map);
+            String ans = tem.toString(); 
+
+        then: "result template should contain replaced value from binding map"
+            println "Test ${AsciidocTemplateTest.tasks} found ans="+ans;
+            assert ans=="My name is Le Roy Brown","template should have one replacement value"
+        
+    } // end of fixture
+
+    // test template conversion for replacement of both JSP-style and groovy-style variables
+    def "test Template generation with JSP binding plus normal groovy binding for a more complex name"()
+    {
+        given:  "make a template with a JSP binding variable in the text and a map"
+            AsciidocTemplate adt = new AsciidocTemplate("My name is <%= name %> aka \${name}"); // escape dollar sign to get thru groovy compiler
+            Map map = ['name':'Le Roy Brown']
+            Writable tem = null;
+             
+        when: "one binding variable is passed to fill template variables"
+            tem = adt.make(map);
+            String ans = tem.toString(); 
+
+        then: "result template should contain replaced value from binding map"
+            println "Test ${AsciidocTemplateTest.tasks} found ans="+ans;
+            assert ans=="My name is Le Roy Brown aka Le Roy Brown","template should have two replacement values, not this:<${ans}>"
+        
+    } // end of fixture
+
+
+    // test template conversion for replacement of both JSP-style and groovy-style variables
+    def "test Template generation with JSP binding plus groovy binding w/2entries for a more complex name"()
+    {
+        given:  "make a template with a JSP binding variable in the text and a map with 2 entries"
+            AsciidocTemplate adt = new AsciidocTemplate("My name is <%= name %> aka \${name}"); // escape dollar sign to get thru groovy compiler
+            Map map = ['name':'Le Roy Brown','age':'21']
+            Writable tem = null;
+             
+        when: "one binding variable is passed to fill template variables"
+            tem = adt.make(map);
+            String ans = tem.toString(); 
+
+        then: "result template should contain replaced value from binding map"
+            println "Test ${AsciidocTemplateTest.tasks} found ans="+ans;
+            assert ans=="My name is Le Roy Brown aka Le Roy Brown","template should have two replacement values, not this:<${ans}>"
+        
+    } // end of fixture
+
+
+    // test template conversion for replacement of both JSP-style and groovy-style variables
+    def "test Template generation with JSP binding plus normal groovy binding for a more complex name but an empty map"()
+    {
+        given:  "make a template with a JSP binding variable in the text and an empty map"
+            AsciidocTemplate adt = new AsciidocTemplate("My name is <%= name %> aka \${name}"); // escape dollar sign to get thru groovy compiler
+            Map map = [:]
+            Writable tem = null;
+             
+        when: "one binding variable is passed to fill template variables"
+            tem = adt.make(map);
+            String ans = tem.toString(); 
+            //log "Test ${AsciidocTemplateTest.tasks} found ans="+ans;
+
+        then: "result template should contain replaced value from binding map"
+            //thrown(MissingPropertyException)
+            MissingPropertyException e = thrown();
+            println("-> Expected failure cause:"+e.message) 
+	    // gives: -> failure cause:No such property: name for class: SimpleTemplateScript743
+    } // end of fixture
+
+
+} // end of class
+
+
+
+/* -------------------------------
+// a bunh of code that was in main() of AsciidocTemplate, so shifted it here until it can become 
+// part of this test suite ...
+
+        org.asciidoctor.Options asciidoctorJOptions=["backend": "html5"]
+        AsciidocTemplate adt = new AsciidocTemplate();
+        Writable tem = adt.make();
+
+        def txt = '''= My Notes About AsciidocTemplate
+jnorthr <doc.writer@asciidoctor.org>
+v1.0, 2014-01-21 
+     
+== Sample Groovy Script
+
+This is a sample of some asciidoc text. We can use it as a preliminary test of the ability of asciidoctorj - the Java version of the Ruby tool asciidoc.  
+There is also a name of jnorthr 
+'''   
+
+        print "1. the first sample is empty. The result is "
+        println tem;
+        println 'end of test 1'
+        
+
+        try{
+            adt = new AsciidocTemplate(txt);
+            tem = adt.make();
+            println "2. the 2nd sample has some asciidoc. The result is "+tem?.toString();
+        }
+        catch(Exception e) 
+        {
+            println 'Test 2 failed with message:'+e.message
+        } // end of catch
+
+        println 'end of test 2'
+
+        adt = new AsciidocTemplate(txt);
+        Map map = ['name':'jnorthr']
+        tem = adt.make(map);
+        println "3. the 3rd sample has some asciidoc plus a binding. The result is "+tem?.toString();
+        println 'end of test 3'
+
+        adt = new AsciidocTemplate();
+        tem = adt.make(map);
+        println "4. the 4th sample has no text but with a binding. The result is "+tem?.toString();
+        println 'end of test 4'
+
+        def f = new File("./resources/simpletemplate.adoc")
+        println "Setup for Test 5 found filename:"+f.canonicalFile.toString()
+        def adoc = f.text
+        
+        println """
+==================================================================        
+        ${adoc}
+=================================================================
+
+"""
+
+        adt = new AsciidocTemplate(adoc);
+        tem = adt.make(map);
+        println "5. the 5th sample has asciidoc text with a binding going thur asciidoctorj. The result is "+tem?.toString();
+        println 'end of test 5'
+
+        println 'start of test 6 ---------------------------'
+        adt = new AsciidocTemplate(adoc);
+        tem = adt.make(map);
+        println "6. the 6th sample has asciidoc text with a binding going thur asciidoctorj. The result is "+tem?.toString();
+        println 'end of test 6 --------------------------'
+
+
+        println 'start of test 7 ---------------------------'
+        //def f = new File("./resources/simpletemplate.adoc")
+        adoc = f.text
+        def template = new AsciidocTemplate(adoc);
+        Map map2 = ['name':'jnorthr']
+        def text = template.make(map2);
+        StringWriter sw = new StringWriter();
+        text.writeTo(sw);
+        println "7. the 7th sample has asciidoc text with a binding going thur asciidoctorj. The result is "+text?.toString();
+        println 'end of test 7 --------------------------'
+
+
+        println 'ending...'
+*/

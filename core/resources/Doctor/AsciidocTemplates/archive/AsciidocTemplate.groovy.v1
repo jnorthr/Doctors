@@ -1,0 +1,100 @@
+package groovyx.caelyf.templating
+import groovy.text.*;
+import java.util.*;
+import groovy.lang.*;
+
+// for asciidoctorj 
+import static org.asciidoctor.Asciidoctor.Factory.create;
+import org.asciidoctor.Asciidoctor;
+
+//to test without gradle use this grab
+@Grab(group='org.asciidoctor', module='asciidoctor-java-integration', version='0.1.4')
+public class AsciidocTemplate implements groovy.text.Template
+{
+    boolean includeHeaderFooter = true;
+    
+    org.asciidoctor.Options asciidoctorJOptions=["backend": "html","header_footer":includeHeaderFooter]
+    
+    Asciidoctor asciidoctor;
+    
+    def payload = "";
+    
+    public AsciidocTemplate()
+    {
+        asciidoctor = create();
+    } // end of constructor
+
+    public AsciidocTemplate(def payload)
+    {
+        asciidoctor = create();
+        this.payload = payload;
+    } // end of constructor
+
+    Writable make()
+    {
+        return render() as Writable;  //output as Writable;
+    } // end of make
+
+    Writable make(Map binding)
+    {
+        this.binding = binding;
+        return render() as Writable;
+    } // end of make
+
+
+    def render()
+    {
+        def asciidocContent = asciidoctor.render(this.payload, asciidoctorJOptions);
+        println "---------------------------\n${asciidocContent}\n------------------"
+        println asciidocContent.getClass();
+        println "---------------------------\n${asciidocContent}\n------------------"
+        final ContentWriter out = new ContentWriter(asciidocContent);
+         
+        //Writable w = asciidocContent.asWritable()
+        //{ w -> w.println output }.asWritable()
+        return asciidocContent;  // as Writable; // as Writable;
+        //return asciidoctor.render(this.payload, asciidoctorJOptions);  // as Writable;
+    } // end of render
+    
+    
+    public static void main(String[] args)
+    {
+        def payload ='''= My Notes About AsciiDoctor
+jnorthr <doc.writer@asciidoctor.org>
+v1.0, 2014-01-01
+
+== Nice Tutorial
+http://saltnlight5.blogspot.fr/2013/08/how-to-convert-asciidoc-text-to-html.html[Nice Tutorial]
+
+== Sample Groovy Script
+Some text here.
+''';
+
+        AsciidocTemplate adt = new AsciidocTemplate(payload);
+        Writable asciidocContent = adt.make();
+        println "process() rendered:\n--------------------------------------\n"+ asciidocContent + "\n======================================\n\n\n"
+        println "output has a class of "+asciidocContent.getClass()
+        
+        // We use a Writer object, can be any Writer e.g. FileWriter.
+        final StringWriter writer = new StringWriter();
+        asciidocContent.writeTo(writer);
+        System.out.println(writer.toString());
+
+        println "--- the end ---"
+    } // end of main
+    
+} // end of class
+
+public class ContentWriter implements groovy.lang.Writable
+{
+    String sb = "";
+    
+    public ContentWriter(String content)
+    {
+        sb = content;
+    } // end of constructor
+    
+    Writer writeTo(Writer out) throws IOException
+    {
+    }
+} // end of class

@@ -1,0 +1,8 @@
+
+== Sample2.adoc Header
+
+TIP: Here are some notes for header2
+
+=== Samples And References
+ 
+We could describe the many features of the asciidoctor syntax, but why bother ? 

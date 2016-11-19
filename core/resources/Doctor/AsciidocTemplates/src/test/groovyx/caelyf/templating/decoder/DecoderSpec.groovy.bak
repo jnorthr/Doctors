@@ -1,0 +1,14 @@
+package groovyx.caelyf.templating.decoder
+import spock.lang.Specification
+
+class DecoderSpec extends Specification {
+
+    def "Create new template decoder"() {
+        when:
+        	def decoderService = new Decoder("Hi kids")
+
+        then:
+		"hi kids" == decoderService.txt
+    }
+
+}

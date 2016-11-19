@@ -1,0 +1,82 @@
+public class CacheEntry{
+    int i = -1;
+    int j = -1;
+    String txt="";
+    boolean include = false;
+} // end of class
+
+entries = []
+def txt='''abc<% include '/WEB-INF/includes/header.gtpl' %>def
+
+<h1>VCAP_APPLICATION</h1>
+<pre>
+<%= request.getAttribute('va') %>
+</pre>
+ghi<% include '/WEB-INF/includes/footer.gtpl' %>jkl
+'''
+
+def finder2(tx)
+{
+    int i=0
+    while(i < tx.size())
+    {
+        i = tx.substring(i).indexOf("<%"); println "finder2: i=$i";
+        if (i<0)
+        {
+            i = tx.size() + 5
+        } // end of if        
+        else
+        {
+            i+=2; println "setting i=$i"
+        } // end of else
+    
+    } // end of while
+}
+
+def finder(tx)
+{ 
+    int i=0;
+    boolean stop = false;
+    int loop = 0;
+    while(i > -1 && i < tx.size() && !stop)
+    {    
+        say "i=${i} and tx.size()=${ tx.size() }"
+        i = tx.substring(i).indexOf("<%");
+        if (i > -1)
+        {
+            def rest = tx.substring(i+2);
+            say "--> i="+i+" and rest=[${rest}]"
+            int j = rest.indexOf("%>");
+            def ss = rest.substring(0,j);
+            say "j="+j+" and ss=[${ss}]"
+            boolean incl = isInclude(ss);
+            def entry = new CacheEntry('i':i,'j':j,'txt':ss,'include':incl);
+            entries << entry;
+            i = j;
+            if (++loop > 4) stop = true;
+        } // end of if
+        
+     entries.each{e-> 
+         say "the rest=<"+e.txt+"> and i=${e.i} and j=${e.j}"; 
+         boolean incl = isInclude(e.txt);
+         say "isInclude ? "+incl;
+     } // end of each
+        
+    } // end of while
+    
+} // end of finder
+
+def say(tx) {println tx;}
+boolean isInclude(String text)
+{
+    def lc = text.toLowerCase();
+    int k = lc.indexOf(" include");
+    def flag = ( k > -1 ) ? true : false;
+    
+    return flag;
+} // end of isInclude
+
+say "--- the start ---" 
+finder(txt);
+finder2(txt);
+say "--- the end ---" 
