@@ -1,3 +1,4 @@
+:name: jnorthr
 == Sample Include
 
 *Welcome to topic.adoc*

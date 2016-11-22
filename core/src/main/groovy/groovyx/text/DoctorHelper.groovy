@@ -52,13 +52,13 @@ public class DoctorHelper
     /** a specific boolean flag to write additional stuff to the document header and trailer */ 
     boolean includeHeaderFooter = true;
 
-	DocumentHeader header; 
+	DocumentHeader header = new DocumentHeader(); 
 	String title =  "";
-	Author author;
+	Author author = new Author();
     String email = "";
     String fullname = "";
     
-    RevisionInfo revisionInfo;
+    RevisionInfo revisionInfo = new RevisionInfo();
     String date = "";
     String version = "";
     String remarks = "";
@@ -133,61 +133,67 @@ public class DoctorHelper
     * @return writable stream of text rendered after translation
     */     
     def render(def payload) 
-    {
+    {    	
     	def reply = "";
-        try
+
+    	if (payload==null)
+    	{
+    		payload = "";
+    	}
+
+    	try
         {
-        	header = asciidoctor.readDocumentHeader(payload);
-        	title = header.getDocumentTitle().getMain();
-        	log.warn "header title="+title 
-
-            author = header.getAuthor();
-        	log.warn "header author="+author; 
-
-			if (author!=null)
+	        header = asciidoctor.readDocumentHeader(payload);
+			if (header.getDocumentTitle()!=null)
 			{
-            	email = author.getEmail();
-        		log.warn "header email="+email
-
-            	fullname = author.getFullName();
-        		log.warn "header fullname="+fullname 
+    	    	title = header.getDocumentTitle().getMain();
+        		log.warn "header title="+title 
 			}
+	        
+			if (header.getAuthor()==null)
+			{
+				email = "";
+				fullname = "";
+			}
+			else
+			{
+    	    	email = (author.getEmail()==null) ? "" : author.getEmail();
+	            fullname = (author.getFullName()==null) ? "" : author.getFullName();
+			}
+    	
 			
-            revisionInfo = header.getRevisionInfo();
+	        revisionInfo = header.getRevisionInfo();
 
 			if (revisionInfo!=null)
 			{
-	            date = revisionInfo.getDate();
+	    	    date = (revisionInfo.getDate()==null) ? new Date() : revisionInfo.getDate();
     	    	log.warn "header date="+date 
 
-	            version = revisionInfo.getNumber();
+		        version = (revisionInfo.getNumber()==null) ? "" : revisionInfo.getNumber();
     	    	log.warn "header version="+version 
 
-	            remarks = revisionInfo.getRemark();
+    	        remarks = (revisionInfo.getRemark() == null ) ? "" : revisionInfo.getRemark();
     	    	log.warn "header remarks="+remarks
 			}
 			
-			if (payload!=null)
-			{
-	            reply = asciidoctor.render(payload, asciidoctorJOptions); 
-	        }
-	        else
-	        {
-	        	def msg = "DoctorHelper could not render NULL payload";
-	        	log.fatal  msg;
-	        	reply = msg;
-	        }
+			println ""
+	        reply = asciidoctor.render(payload, asciidoctorJOptions); 
+			println ""
         }
         
         /** Trap failures from translation & return them formatted as asciidoctor msgs, these are rendered into */
         /** the result designated by the backend, typically html */
         catch(any)
         {
-        	reply = "asciidoctor render failed:"+any.message; 
-        	log.fatal "DoctorHelper render failed b/c of "+any.message;
+        	reply = payload; // "asciidoctor render failed:"+any.message; 
+        	def w = "DoctorHelper render failed b/c of "+any.message;
+        	log.fatal w;
+        	println w;
         } // end of catch
         
-        log.info "DoctorHelper rendered "+reply.size()+" bytes"
+		def y = "DoctorHelper rendered "+reply.size()+" bytes"
+		log.info y;
+		println y;
         return reply;
     } // end of method
      
@@ -261,6 +267,11 @@ This is a sample of text.
         sample = """= bad news\n:frog: true\n= More News\n""".toString();
 		ans = dr.render(sample);
 		println ans;
+        println "-----------------------------------\n"
+
+        println "\nUnconventional format:\n-----------------------------------\n"
+		ans = dr.render("Hello World\n");
+		println "ans="+ans.toString();
         println "-----------------------------------\n"
 
         println "--- DoctorHelper end ---"

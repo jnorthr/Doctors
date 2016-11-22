@@ -153,8 +153,11 @@ public class DoctorTemplateEngine extends TemplateEngine
     */     
     public String toString()
     {
-        return """debug=${debug}
-DoctorTemplate content=${template.toString()}
+        return """
+debug=${debug}
+DoctorTemplate content is :
+${template.toString()}
+
 """
     }  // end of method
 
@@ -168,7 +171,7 @@ DoctorTemplate content=${template.toString()}
     public void say(txt)
     {
         if (debug) logger.info txt;
-        if (debug) println txt;
+        println txt;
     }  // end of method
     
    // =====================================================================
@@ -180,15 +183,15 @@ DoctorTemplate content=${template.toString()}
     */    
     public static void main(String[] args)
     {
-        println("DoctorTemplateEngine starting");
+        println("\nDoctorTemplateEngine starting");
         println "-----------------------------------"
         def dr = new DoctorTemplateEngine()
         def payload = dr.createTemplate("= Simple Engine Test").make().toString();
         println "payload size() =" + payload.size() + " bytes";
         println "payload=" + payload.substring( payload.size() - 189 );
         println "-----------------------------------"
-        assert 30271 == payload.size()
+        assert 30000 < payload.size()
         
-        println("DoctorTemplateEngine ending");
+        println("DoctorTemplateEngine ending\n");
 	}
 } // end of class

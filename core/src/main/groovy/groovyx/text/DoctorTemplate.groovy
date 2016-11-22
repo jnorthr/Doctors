@@ -83,7 +83,20 @@ public class DoctorTemplate implements Template
         say "DoctorTemplate(${tf}) debug constructor called"
     } // end of non-default
  
+
  
+   /** 
+    * Asciidoctor Loader method 
+    * 
+    * With no parameters, sets payload to empty string
+    */     
+    public load()
+    {
+        say "DoctorTemplate Load Method 0 = load() method received no bytes";
+        originalPayload = "";        
+    } // end of method
+
+
    /** 
     * Asciidoctor Loader method 
     * 
@@ -338,8 +351,14 @@ IMPORTANT: """.toString()
         writableTemplate.delegate = binding
     	this.payload = writableTemplate;
     	
+    	if (this.payload==null)
+    	{
+    		logger.info "DoctorTemplate Make Method 3 = make(binding, closure) had null payload !"
+    		this.payload = "WARNING: DoctorTemplate Make Method 3 = make(binding, closure) had null payload ! \n"
+    	}
+    	
         /** Return as rendered Writable. */
-        this.payload = dh.render(payload);
+        this.payload = dh.render(this.payload);
         
         return "${this.payload}"; // GString implements Writable 
     } // end of make
@@ -434,13 +453,14 @@ DoctorHelper=${dh.toString()}
         dr1.setWrapper(false);
         println "use make() without parms"
         println dr1.make().toString()
+        
         println "-----------------------------------"
 
         println("DoctorTemplate dr2 starting debug boolean");
         DoctorTemplate dr2 = new DoctorTemplate(true)
         println "turn off asciidoctor header/trailer wrapper"
         dr2.setWrapper(false);
-        println "load nothing"
+        println "load() <- nothing"
         try{
 			dr2.load();
         	println "use make([:]) with empty binding"

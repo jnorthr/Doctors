@@ -207,8 +207,11 @@ V1.1, 2016-08-02, 2016-8-28, revision9
 
 '''.toString()
 		dr = new DoctorTemplateEngine();
+		println "... after create new object"
         def output = dr.createTemplate(source).make()
+		println "... after createTemplate make()"
         println "\n\n->.createTemplate(source).make() output w/o binding:\n|"+output.toString()+"|\n\nsource:\n|"+source+"|\n"
+        println "... end of test 11"
     } // end of test class
 
 

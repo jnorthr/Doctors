@@ -100,14 +100,14 @@ class DoctorHelperTest extends spock.lang.Specification {
 				  test.getClass() == DoctorHelper;
   	} // end of feature method
 
-  	def "Turn off header/trailer wrapper from output"() {
+  	def "Turn off header/trailer wrapper from output using noWrapper()"() {
   		when:     'includeHeaderFooter set to false'
   				  test.noWrapper()
 		then:     test != null;
 				  test.includeHeaderFooter == false;
   	} // end of feature method
  
-  	def "Turn on header/trailer wrapper from output"() {
+  	def "Turn on header/trailer wrapper from output using .setWrapper(true)"() {
   		when:     'includeHeaderFooter set to true'
   				  def flag = test.setWrapper(true)
 		then:     test != null;
@@ -115,15 +115,16 @@ class DoctorHelperTest extends spock.lang.Specification {
 				  test.includeHeaderFooter == true;
   	} // end of feature method
  
-  	def "Turn off header/trailer wrapper from output"() {
+  	def "Turn off header/trailer wrapper from output using .setWrapper(false)"() {
   		when:     'includeHeaderFooter set to false'
   				  def flag = test.setWrapper(false);
   				  def tx = test.render("Hello World\n");
+  				  println "|"+tx+"|";
   				  
 		then:     test != null;
 				  flag == false;
 				  test.includeHeaderFooter == false;
-				  tx.size() == 49
+				  tx.size() > 48
 				  tx == '<div class="paragraph">\n<p>Hello World</p>\n</div>'
 
   	} // end of feature method
