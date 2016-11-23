@@ -1,6 +1,6 @@
 <% include '/WEB-INF/includes/header.gtpl' %>
 
-<h1>Welcome</h1>
+<h1>Welcome to index.gtpl</h1>
 
 <p>
     Congratulations, you've just created your first <img src="/images/caelyf-logo.png" width=20px> Caelyf application for the Cloud Foundry platform.
@@ -33,6 +33,14 @@
 
 <p>
     Click <a href="/topic6">here</a> for topic 6.
+</p>
+
+<p>
+    Click <a href="/topic7">here</a> for topic 7.
+</p>
+
+<p>
+    Click <a href="/topic8">here</a> for topic 8.
 </p>
 
  

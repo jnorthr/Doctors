@@ -10,3 +10,7 @@ get "/topic4", forward: "index2.html", cache: 30.seconds
 get "/topic5", forward: "/WEB-INF/index3.adoc", cache: 10.seconds
 get "/topic6", forward: "/WEB-INF/index4.html", cache: 10.seconds
 get "/topic7", forward: "index5.adoc", cache: 30.seconds
+get "/topic8", forward: "piece.adoc", cache: 30.seconds
+
+get "/readme", forward: "README.adoc"
+
