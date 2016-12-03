@@ -1,0 +1,68 @@
+= Index of Valid Documents
+jnorthr <james.northrop@orange.fr>
+v1.0, Fri Dec 02 17:39:34 CET 2016: First version
+:toc: right
+:linkattrs:
+:icons: font
+
+TIP: Taken from folder *C:/Users/Jim/Dropbox/Projects/Doctors/core/build*
+
+''''
+
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/allclasses-frame.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/allclasses-frame.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/deprecated-list.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/deprecated-list.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/Doctor.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/Doctor.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/DoctorHelper.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/DoctorHelper.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/DoctorTemplate.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/DoctorTemplate.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/DoctorTemplateEngine.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/DoctorTemplateEngine.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/DoctorTemplateScanner.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/DoctorTemplateScanner.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/DrTest.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/DrTest.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/package-frame.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/package-frame.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/package-summary.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/groovyx/text/package-summary.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/help-doc.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/help-doc.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/index-all.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/index-all.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/index.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/index.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/overview-frame.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/overview-frame.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/overview-summary.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/docs/groovydoc/overview-summary.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/reports/tests/classes/groovyx.text.DoctorHelperTest.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/reports/tests/classes/groovyx.text.DoctorHelperTest.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/reports/tests/classes/groovyx.text.DoctorTemplateEngineTest1.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/reports/tests/classes/groovyx.text.DoctorTemplateEngineTest1.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/reports/tests/classes/groovyx.text.DoctorTemplateEngineTest3.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/reports/tests/classes/groovyx.text.DoctorTemplateEngineTest3.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/reports/tests/index.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/reports/tests/index.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/reports/tests/packages/groovyx.text.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/reports/tests/packages/groovyx.text.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/resources/main/DSL.adoc[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/resources/main/DSL.adoc]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/resources/main/DSL.html[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/resources/main/DSL.html]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/resources/main/header.txt[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/resources/main/header.txt]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/resources/main/Sample1.adoc[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/resources/main/Sample1.adoc]
+
+link:file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/resources/main/Sample2.adoc[file://c:/Users/Jim/Dropbox/Projects/Doctors/core/build/resources/main/Sample2.adoc]
+
+
+
+''''
+
+TIP: This directory has 25 valid files
+

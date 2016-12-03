@@ -1,20 +1,26 @@
 // File: core:build.gradle for DoctorProject in the Doctors folder
 apply plugin: 'groovy' // Adds test task
-//apply plugin:'war'
+
 apply plugin: "com.github.johnrengelman.shadow" // Dark Shadow to create fatUber Jars
  
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
  
-defaultTasks 'clean', 'classes', 'groovydoc', 'jar', 'shadowJar', 'test', 'runDTT', 'runDTST', 'runDT', 'runCT','runDRTEM', 'runEngine', 'runJob' //,'jar'
+defaultTasks 'clean', 'classes', 'groovydoc', 'jar', 'shadowJar', 'test', 'runDTT', 'runDTST', 'runDT', 'runDR', 'runCT','runDRTEM', 'runEngine', 'runJob' 
 // mainClassName = 'groovyx.text.DoctorTemplate'; 
 
+
+configurations {
+    ivy
+}
+
+	
 configurations {
 	// Create new dependency configuration
 	// for dependencies to be added in
 	// WAR file and place this dependency on the classpath
 	jarLib.extendsFrom classpath
-    ivy
+    	//ivy
 }
 
 // project version
@@ -25,13 +31,14 @@ buildscript {
     repositories {
         maven{ 
         	url 'http://jcenter.bintray.com' 
-		    url "https://plugins.gradle.org/m2/"
+		url "https://plugins.gradle.org/m2/"
         }
 		mavenCentral()
     }
     dependencies 
     {
-    	classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
+    	classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3" 
+    	//classpath "org.apache.ivy:ivy:2.4.0"
     }
 }
 
@@ -40,18 +47,22 @@ repositories{
 }
 
 dependencies {
+	ivy "org.apache.ivy:ivy:2.1.0"
+	compile 'org.apache.ivy:ivy:2.1.0'
 
-    // Using sfl4j allows us to replace different loggers later, if desired
-    compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.21'
-    compile group: 'log4j', name:'log4j', version: '1.2.17'
-	
+	// Using sfl4j allows us to replace different loggers later, if desired
+    	compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.21'
+    	compile group: 'log4j', name:'log4j', version: '1.2.17'
+	//compile 'org.apache.ivy:ivy:2.1.0'
+
 	// better put log4j.properties in the src/main/resources folders 
-	compile 'org.codehaus.groovy:groovy-all:2.4.4'
-    compile 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3' so it runs on jdk6
-    runtime 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3'
+	compile 'org.codehaus.groovy:groovy-all:2.4.7'
+	compile 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3' so it runs on jdk6
+    	runtime 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3'
     
-    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-    testCompile 'org.springframework.boot:spring-boot-test:1.4.1.RELEASE'
+	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    	testCompile 'org.springframework.boot:spring-boot-test:1.4.1.RELEASE'
+
     
     // sfl4j is just a facade for loggers. To actually get logging to work, you need to
     // tie it in with some actual implementation, e.g., logback
@@ -61,7 +72,6 @@ dependencies {
     runtime group: 'ch.qos.logback', name:'logback-core', version: '1.1.7'
     runtime group:'ch.qos.logback', name:'logback-classic', version:'1.1.7'    
     
-    ivy 'org.apache.ivy:ivy:2.4.0'
     jarLib 'ch.qos.logback:logback-classic:1.1.2'
 }
 
@@ -77,6 +87,7 @@ dependencies {
 		}
 	} // end of main
 } // end of sourceSets
+
 
 test {
     maxParallelForks = Runtime.getRuntime().availableProcessors()
@@ -132,6 +143,17 @@ task runDT(type: JavaExec, dependsOn: 'classes') {
     classpath+=sourceSets.test.runtimeClasspath
     classpath+=configurations.jarLib
     args 'World'
+    systemProperty 'simple.message', 'Hello '
+} // end of run
+
+
+task runDR(type: JavaExec, dependsOn: 'classes') {
+    main = 'groovyx.text.DrTest'
+    classpath = configurations.runtime
+    classpath+=sourceSets.main.runtimeClasspath
+    classpath+=sourceSets.test.runtimeClasspath
+    classpath+=configurations.jarLib
+    args "${projectDir}"
     systemProperty 'simple.message', 'Hello '
 } // end of run
 

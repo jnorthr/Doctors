@@ -145,6 +145,22 @@ public class DoctorTemplateEngine extends TemplateEngine
     } // end of method
 
 
+   /** 
+    * Method to construct a DoctorTemplate from string text provided using URL address.
+    * 
+    * @param reader contains URI address of a text string composed in the asciidoctor markup syntax.
+    * @return DoctorTemplate instance
+    */         
+    public DoctorTemplate createTemplate(URL reader)
+    {        
+        say "DoctorTemplateEngine() createTemplate(URL ${reader})"
+        java.lang.Boolean b = true
+        template = new groovyx.text.DoctorTemplate(b)
+        template.load(reader.getText());
+        return template;
+    } // end of method
+
+
 
    /** 
     * Method to display internal variables.
@@ -174,6 +190,7 @@ ${template.toString()}
         println txt;
     }  // end of method
     
+    
    // =====================================================================
    /** 
     * Method to run class tests.
@@ -192,6 +209,9 @@ ${template.toString()}
         println "-----------------------------------"
         assert 30000 < payload.size()
         
+        // try URL https://github.com/jnorthr/Doctors/blob/master/README.adoc
+        DoctorTemplate dt = dr.createTemplate(new URL("https://github.com/jnorthr/Doctors/blob/master/README.adoc"))
+        println dt.make().toString();
         println("DoctorTemplateEngine ending\n");
 	}
 } // end of class

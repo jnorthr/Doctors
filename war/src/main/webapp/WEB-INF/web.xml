@@ -102,9 +102,10 @@
     </filter-mapping>
 
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-        <welcome-file>index.gtpl</welcome-file>
+        <welcome-file>directory.html</welcome-file>
+        <welcome-file>directory.adoc</welcome-file>
         <welcome-file>index.adoc</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
    
 </web-app>

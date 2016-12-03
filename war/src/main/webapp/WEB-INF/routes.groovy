@@ -1,4 +1,9 @@
+get "/gen", forward: "/directory.groovy"
+get "/dir", forward: "directory.html", cache: 60.minutes
+get "/adoc", forward: "directory.adoc", cache: 60.minutes
+
 get "/", forward: "/WEB-INF/pages/index.gtpl", cache: 60.seconds
+
 get "/datetime", forward: "/datetime.groovy", cache: 10.seconds
 
 get "/topic1", forward: "index.adoc", cache: 10.seconds

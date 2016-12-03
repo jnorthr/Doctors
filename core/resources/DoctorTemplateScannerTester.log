@@ -1,0 +1,136 @@
+DoctorTemplateScanner arrives
+--- the start ---
+
+============================
+Result=
+|ab<>cd<%%>ef<% include %>gh<% include %>ij<% include %>kl<% include %>mn<%=include %>op<% include%>qr<%include%>st<%= name %>uv<%include'%>wx<%include''%>yz<%include"%>aa<%include""%>bb<%include=''%>cc<%include='fred'%>dd<%include 'fred'%>ee<%include file='fred'%>ff<%  include file="sample.txt"%>gg<%=  include Sample1.adoc %>hh<%=  include sample.txt%>II<%=  include /media/jnorthr/LINKS/asciidoctor-project/war/asciidocs/sample1.adoc %>JJ<%=  include   /home/jnorthr/Google Drive/DoctorTemplate/war/asciidocs/sample6.adoc    %>KK;
+<%= Hi kids <% include 'Sample1.adoc' %>wxy($buildDir/template.groovy)The End|
+-----------------------------------
+ 0   0    1    1    2    2    3    3    4    5    5    5    6    6    7    7    8
+012345678901234567890123456789012345678901234567890123456789012345678901234567890
+------------------------------
+ab<>cd<%%>ef<% include %>gh<% include %>ij<% include %>kl<% include %>mn<%=include %>op<% include%>qr<%include%>st<%= name %>uv<%include'%>wx<%include''%>yz<%include"%>aa<%include""%>bb<%include=''%>cc<%include='fred'%>dd<%include 'fred'%>ee<%include file='fred'%>ff<%  include file="sample.txt"%>gg<%=  include Sample1.adoc %>hh<%=  include sample.txt%>II<%=  include /media/jnorthr/LINKS/asciidoctor-project/war/asciidocs/sample1.adoc %>JJ<%=  include   /home/jnorthr/Google Drive/DoctorTemplate/war/asciidocs/sample6.adoc    %>KK;
+<%= Hi kids <% include 'Sample1.adoc' %>wxy($buildDir/template.groovy)The End
+
+------------------------------
+Payload2 follows:
+ 0   0    1    1    2    2    3    3    4    5    5    5    6    6    7    7    8
+012345678901234567890123456789012345678901234567890123456789012345678901234567890
+------------------------------
+= Sample Asciidoctor Include
+
+<% include 'Sample1.adoc' %>
+------------------------------
+= Sample Asciidoctor Include
+
+<% include 'Sample1.adoc' %>
+
+------------------------------
+ 0   0    1    1    2    2    3    3    4    5    5    5    6    6    7    7    8
+012345678901234567890123456789012345678901234567890123456789012345678901234567890
+------------------------------
+<% include heading.txt %>
+== Cloud Foundry Notes
+
+The document title is called {doctitle} and has {fred} parts with groovy +++<%= user %>+++ users!
+
+------------------------------
+<% include heading.txt %>
+== Cloud Foundry Notes
+
+The document title is called {doctitle} and has {fred} parts with groovy +++<%= user %>+++ users!
+
+
+------------------------------ 0   0    1    1    2    2    3    3    4    5    5    5    6    6    7    7    8
+012345678901234567890123456789012345678901234567890123456789012345678901234567890
+------------------------------
+= Note 3.0
+Community Documentation <${user}@groovy.codehaus.org>
+v1.1, 2014-07-21 updated 17 July 2015
+:toc: left
+:allow-uri-read:
+:linkcss:
+
+== Cloud Foundry Notes
+
+The document title is called {doctitle} and has {fred} parts with groovy +++<%= user %>+++ users!
+<%= user %> 
+Here is a groovy gstring var:{name} +++<% include file="includes/header.jsp" %>+++
+http://docs.gopivotal.com/pivotalcf/concepts/roles.html[Orgs, Spaces, Roles, and Permissions ]
+
+The include directive works like this:
+
+[source,groovy]
+.Sample1.adoc
+----
+include::Sample1.adoc[]
+----
+
+
+------------------------------
+= Note 3.0
+Community Documentation <${user}@groovy.codehaus.org>
+v1.1, 2014-07-21 updated 17 July 2015
+:toc: left
+:allow-uri-read:
+:linkcss:
+
+== Cloud Foundry Notes
+
+The document title is called {doctitle} and has {fred} parts with groovy +++<%= user %>+++ users!
+<%= user %> 
+Here is a groovy gstring var:{name} +++<% include file="includes/header.jsp" %>+++
+http://docs.gopivotal.com/pivotalcf/concepts/roles.html[Orgs, Spaces, Roles, and Permissions ]
+
+The include directive works like this:
+
+[source,groovy]
+.Sample1.adoc
+----
+include::Sample1.adoc[]
+----
+
+
+
+------------------------------
+ 0   0    1    1    2    2    3    3    4    5    5    5    6    6    7    7    8
+012345678901234567890123456789012345678901234567890123456789012345678901234567890
+------------------------------
+= My Notes About AsciiDoctor
+fred <fred.writer@asciidoctor.org>
+v1.0, 2014-02-01
+:toc:
+:homepage: http://asciidoctor.org
+:nofooter:
+
+== Nice Tutorial
+http://asciidoctor.org/docs/asciidoc-writers-guide/[Writer's Guide]
+
+== Date / time
+
+The current date and time: <%= request.getAttribute('datetime') %>.
+
+My name is <%= request.getAttribute('name') %>
+
+<% include '/WEB-INF/includes/footer.gtpl' %>
+
+= My Notes About AsciiDoctor
+fred <fred.writer@asciidoctor.org>
+v1.0, 2014-02-01
+:toc:
+:homepage: http://asciidoctor.org
+:nofooter:
+
+== Nice Tutorial
+http://asciidoctor.org/docs/asciidoc-writers-guide/[Writer's Guide]
+
+== Date / time
+
+The current date and time: <%= request.getAttribute('datetime') %>.
+
+My name is <%= request.getAttribute('name') %>
+
+<% include '/WEB-INF/includes/footer.gtpl' %>
+
+------------------------------
+--- the end ---

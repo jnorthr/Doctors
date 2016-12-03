@@ -1,4 +1,6 @@
-//@Grab('org.asciidoctor:asciidoctorj:1.5.0')
+//@Grab(group='org.slf4j', module='slf4j-simple', version='1.6.1')
+//@Grab(group='org.asciidoctor', module='asciidoctorj', version='1.5.4.1')
+
 /*
  * Copyright 2016 the original author or authors.
  *
@@ -52,9 +54,9 @@ public class DoctorHelper
     /** a specific boolean flag to write additional stuff to the document header and trailer */ 
     boolean includeHeaderFooter = true;
 
-	DocumentHeader header = new DocumentHeader(); 
-	String title =  "";
-	Author author = new Author();
+    DocumentHeader header = new DocumentHeader(); 
+    String title =  "";
+    Author author = new Author();
     String email = "";
     String fullname = "";
     
@@ -84,7 +86,7 @@ public class DoctorHelper
     */     
     public setWrapper(flag)
     {
-    	log.warn "setting includeHeaderFooter to "+includeHeaderFooter 
+        log.warn "setting includeHeaderFooter to "+includeHeaderFooter 
         includeHeaderFooter = flag;
         asciidoctorJOptions.setHeaderFooter(includeHeaderFooter);
         return includeHeaderFooter;
@@ -128,72 +130,104 @@ public class DoctorHelper
 
 
    /** 
+    * Method to obtain any author details from header of the original text styled in asciidoctor syntax 
+    * 
+    * @return yn true flag if no problems getting header else false 
+    */     
+    boolean getHeader(String payload) 
+    {        
+        boolean yn = true;
+        
+        try
+        {
+            header = asciidoctor.readDocumentHeader(payload);
+            if (header.getDocumentTitle()!=null)
+            {
+                title = header.getDocumentTitle().getMain();
+                log.warn "header title="+title 
+            }
+            
+            if (header.getAuthor()==null)
+            {
+                email = "";
+                fullname = "";
+            }
+            else
+            {
+                email = (author.getEmail()==null) ? "" : author.getEmail();
+                fullname = (author.getFullName()==null) ? "" : author.getFullName();
+            }        
+            
+            revisionInfo = header.getRevisionInfo();
+
+            if (revisionInfo!=null)
+            {
+                date = (revisionInfo.getDate()==null) ? new Date() : revisionInfo.getDate();
+                log.warn "header date="+date 
+
+                version = (revisionInfo.getNumber()==null) ? "" : revisionInfo.getNumber();
+                log.warn "header version="+version 
+
+                remarks = (revisionInfo.getRemark() == null ) ? "" : revisionInfo.getRemark();
+                log.warn "header remarks="+remarks
+            }            
+        }
+        
+        /** Trap failures from trying to find document author,dates etc details */ 
+        /** then populate remarks with error info. */
+        catch(any)
+        {
+            def w = "DoctorHelper getHeader failed b/c of "+any.message;
+            log.fatal w;
+            println w;
+            remarks = w;
+            yn = false;
+        } // end of catch
+            
+        return yn;
+    } // end of getHeader
+    
+    
+    
+   /** 
     * Method to translate the original text styled in asciidoctor syntax 
     * 
     * @return writable stream of text rendered after translation
     */     
-    def render(def payload) 
-    {    	
-    	def reply = "";
+    String render(String payload) 
+    {        
+        String reply = "";
 
-    	if (payload==null)
-    	{
-    		payload = "";
-    	}
-
-    	try
+        if (payload==null)
         {
-	        header = asciidoctor.readDocumentHeader(payload);
-			if (header.getDocumentTitle()!=null)
-			{
-    	    	title = header.getDocumentTitle().getMain();
-        		log.warn "header title="+title 
-			}
-	        
-			if (header.getAuthor()==null)
-			{
-				email = "";
-				fullname = "";
-			}
-			else
-			{
-    	    	email = (author.getEmail()==null) ? "" : author.getEmail();
-	            fullname = (author.getFullName()==null) ? "" : author.getFullName();
-			}
-    	
-			
-	        revisionInfo = header.getRevisionInfo();
+            payload = "";
+        }
 
-			if (revisionInfo!=null)
-			{
-	    	    date = (revisionInfo.getDate()==null) ? new Date() : revisionInfo.getDate();
-    	    	log.warn "header date="+date 
-
-		        version = (revisionInfo.getNumber()==null) ? "" : revisionInfo.getNumber();
-    	    	log.warn "header version="+version 
-
-    	        remarks = (revisionInfo.getRemark() == null ) ? "" : revisionInfo.getRemark();
-    	    	log.warn "header remarks="+remarks
-			}
-			
-			println ""
-	        reply = asciidoctor.render(payload, asciidoctorJOptions); 
-			println ""
+        String txt = payload.toString();
+        
+        try
+        {
+            boolean yn = getHeader(txt)            
+            
+            println ""                        
+            reply = (yn) ? asciidoctor.render(txt, asciidoctorJOptions) : remarks; 
+            println ""
         }
         
-        /** Trap failures from translation & return them formatted as asciidoctor msgs, these are rendered into */
+        /** Trap failures from translation & return formatted as asciidoctor msgs, these are rendered into */
         /** the result designated by the backend, typically html */
         catch(any)
         {
-        	reply = payload; // "asciidoctor render failed:"+any.message; 
-        	def w = "DoctorHelper render failed b/c of "+any.message;
-        	log.fatal w;
-        	println w;
+            reply = payload; // "asciidoctor render failed: so just return original text
+            def w = "DoctorHelper render failed b/c of "+any.message;
+            log.fatal w;
+            println w;
         } // end of catch
         
-		def y = "DoctorHelper rendered "+reply.size()+" bytes"
-		log.info y;
-		println y;
+        String msg = "DoctorHelper rendered "+reply.size()+" bytes"
+        log.info msg;
+        println msg;
+        
         return reply;
     } // end of method
      
@@ -241,37 +275,37 @@ attributes=${attributes}
         DoctorHelper dr = new DoctorHelper();
         println dr.toString();        
         println "-----------------------------------\n"
-		
-		def sample = """= DoctorHelper
+        
+        def sample = """= DoctorHelper
 
 == First Title
 
 This is a sample of text.
 """.toString();
 
-		def ans = dr.render(sample);
-		println "Render size="+ans.size()
-		println ans.substring( ans.size() - 300 );
-		
+        def ans = dr.render(sample);
+        println "Render size="+ans.size()
+        println ans.substring( ans.size() - 300 );
+        
         println "-----------------------------------\n"
         println dr.toString();
         
         dr.noWrapper();
         println "-----------------------------------\n"
         println dr.toString();
-		ans = dr.render(sample);
-		println ans;
+        ans = dr.render(sample);
+        println ans;
         println "-----------------------------------\n"
         
         dr.setWrapper(false);
         sample = """= bad news\n:frog: true\n= More News\n""".toString();
-		ans = dr.render(sample);
-		println ans;
+        ans = dr.render(sample);
+        println ans;
         println "-----------------------------------\n"
 
         println "\nUnconventional format:\n-----------------------------------\n"
-		ans = dr.render("Hello World\n");
-		println "ans="+ans.toString();
+        ans = dr.render("Hello World\n");
+        println "ans="+ans.toString();
         println "-----------------------------------\n"
 
         println "--- DoctorHelper end ---"
