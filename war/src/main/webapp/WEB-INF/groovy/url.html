@@ -5,8 +5,8 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.0">
-<meta name="author" content="Community Documentation">
-<title>Groovy Docs - Domain Specific Languages</title>
+<meta name="author" content="jnorthr">
+<title>Doctors</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic|Noto+Serif:400,400italic,700,700italic|Droid+Sans+Mono:400">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -411,113 +411,242 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
 </head>
-<body class="article toc2 toc-left">
+<body class="article">
 <div id="header">
-<h1>Groovy Docs - Domain Specific Languages</h1>
+<h1>Doctors</h1>
 <div class="details">
-<span id="author" class="author">Community Documentation</span><br>
-<span id="email" class="email"><a href="mailto:user@groovy.codehaus.org">user@groovy.codehaus.org</a></span><br>
-<span id="revnumber">version 1.1,</span>
-<span id="revdate">2014-07-01 updated 7 July 2014</span>
-</div>
-<div id="toc" class="toc2">
-<div id="toctitle">Notes and Links</div>
-<ul class="sectlevel1">
-<li><a href="#_improving_groovy_documentation">Improving Groovy Documentation</a></li>
-<li><a href="#_builders">Builders</a>
-<ul class="sectlevel2">
-<li><a href="#_creating_a_builder">Creating a builder</a></li>
-<li><a href="#_existing_builders">Existing builders</a></li>
-</ul>
-</li>
-</ul>
+<span id="author" class="author">jnorthr</span><br>
+<span id="email" class="email"><a href="mailto:james.northrop@orange.fr">james.northrop@orange.fr</a></span><br>
 </div>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<link rel="stylesheet"  href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css">
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<a href="https://raw.githubusercontent.com/groovy/groovy-core/master/src/spec/doc/core-domain-specific-languages.adoc">Github .ADoc Raw Look</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://github.com/groovy/groovy-core/tree/master/src/spec/doc">Github Groovy-Core Adocs</a>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
 <div class="sect1">
-<h2 id="_improving_groovy_documentation">Improving Groovy Documentation</h2>
+<h2 id="_status">Status</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can contribute to the improvement of groovy reference materials. Follw <a href="http://blog.cacoethes.co.uk/groovyandgrails/contributing-to-the-groovy-documentation/comment-page-1#comment-2842">this</a> guide to learn how.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_builders">Builders</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Languages must grow and evolve to embrace new ideas, and technologies or they will die. Computer languages are no different. Those languages with the ability to grow and adapt to new ways of working, and new ideas will be here for many years.</p>
-</div>
-<div class="paragraph">
-<p>Groovy offers developers this ability with a feature we call the 'builder' concept. For more detail, please explore these links:</p>
-</div>
-<div class="ulist">
-<div class="title">Builders And How They Work</div>
-<ul>
-<li>
-<p><a href="http://docs.codehaus.org/display/GROOVY/How+Builders+Work">How Builders Work</a></p>
-</li>
-<li>
-<p><a href="http://groovy.codehaus.org/Builders">Groovy Builders</a></p>
-</li>
-<li>
-<p><a href="http://groovy.codehaus.org/api/groovy/util/BuilderSupport.html">Groovy Builder&#8217;s Support</a> - look at the API documents for this abstract class</p>
-</li>
-</ul>
+<p><strong>Travis C/I</strong> Project Health -
+<span class="image"><a class="image" href="https://travis-ci.org/jnorthr/Doctors"><img src="https://img.shields.io/travis/jnorthr/Doctors.svg" alt="Build Status (Travis CI)"></a></span></p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_creating_a_builder">Creating a builder</h3>
-<div class="paragraph">
-<p><a href="http://groovy.codehaus.org/Make+a+builder">How To Make A Builder</a></p>
 </div>
-<div class="sect3">
-<h4 id="_meta_builder">Meta Builder</h4>
-<div class="paragraph">
-<p>Wouldn&#8217;t it be nice to have a tool to build a builder ? Groovy delivers it with : <strong>MetaBuilder</strong> !</p>
 </div>
+<div class="sect1">
+<h2 id="_notes_about_doctor">Notes About Doctor</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Get more details <a href="http://sourceforge.net/projects/groovytools/files/groovytools-builder/">from sourceforge here</a>. Ok, this idea is a little old and there may be other, more recent solutions, but this one is worth a little research.</p>
+<p>A Groovy Template Engine to produce html stream from text files written in the Asciidoctor syntax.</p>
 </div>
-<div class="sect4">
-<h5 id="_setup_this_tool">Setup this tool</h5>
+<hr>
 <div class="paragraph">
-<p>Grab the jar from the sourceforge link above, then include groovytools-builder-x.x.x.jar in your classpath.</p>
+<p><a href="http://www.rolandfg.net/2014/01/06/web-apps-using-groovlets/">Using Groovlets</a> - a nice explanation <strong>HOW-TO</strong></p>
 </div>
 <div class="listingblock">
+<div class="title">Web.xml</div>
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">import groovytools.builder.*
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;!-- setup the GroovyServlet in your web.xml
+          and bind the script file extension --&gt;
 
-MetaBuilder mb = new MetaBuilder(getClass().getClassLoader())</code></pre>
+  &lt;servlet&gt;
+      &lt;servlet-name&gt;groovlets&lt;/servlet-name&gt;
+      &lt;servlet-class&gt;groovy.servlet.GroovyServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+      &lt;servlet-name&gt;groovlets&lt;/servlet-name&gt;
+      &lt;url-pattern&gt;*.groovy&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Build.gradle script</div>
+<div class="content">
+<pre class="highlight"><code class="language-gradle" data-lang="gradle"> apply plugin: 'groovy' // java is ok too
+  apply plugin: 'war'
+
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
+
+  dependencies {
+    providedCompile 'javax.servlet:servlet-api:2.5'
+    compile 'org.codehaus.groovy:groovy-all:2.4.5'
+  }</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_handle_a_strong_get_strong">Handle a <strong>GET</strong></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Output HTML on GET request is pretty easy using the built-in <strong>MarkupBuilder</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Template script</div>
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">// if present use name parameter from
+// query string (eg. ?name=Francesco)
+// else use "World"
+
+def name = params.name ?: "World"
+
+// output some html
+
+html.html {
+    head {
+        title "Hello from Groovlet!"
+    }
+    body {
+        h1 "Hello, jnorthr!"
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the example above, you see also Groovy native template engine: (G)String concatenation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_handle_a_strong_post_strong">Handle a <strong>POST</strong></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With built-in variables bound from the Servlet request via the GrailsServlet, you can also perform more complicated operations like handling some JSON in POST request.</p>
+</div>
+<div class="listingblock">
+<div class="title">Groovy Request Handler script</div>
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">response.contentType = 'application/json'
+
+// Access headers, with context bound variable
+if (headers['Content-Type'] != "application/json") {
+    throw new RuntimeException("Please use 'application/json' header")
+}
+
+// Get content from POST body
+def jsonContent = request.reader.text
+
+// Parse JSON to Map
+def content = null
+if (jsonContent) {
+    content = new JsonSlurper()
+                .parseText(jsonContent)
+}
+
+// build JSON output
+json."echo" {
+    "original" content
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_groovy_template_servlet">Groovy Template Servlet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="http://docs.groovy-lang.org/latest/html/api/groovy/servlet/TemplateServlet.html">Template Servlet</a></p>
+</div>
+<div class="paragraph">
+<p>It delegates work to a groovy.text.TemplateEngine implementation processing HTTP requests.</p>
+</div>
+<div class="sect2">
+<h3 id="_usage">Usage</h3>
+<div class="paragraph">
+<p><strong>helloworld.html</strong> is a headless HTML-like template</p>
+</div>
+<div class="listingblock">
+<div class="title">Groovy Template script</div>
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">  &lt;html&gt;
+    &lt;body&gt;
+
+        Hello World!
+
+        Hello World!
+
+        Hello World!
+
+      &lt;br&gt;
+    &lt;/body&gt;
+  &lt;/html&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_minimal_web_xml_example_serving_html_like_templates">Minimal web.xml example serving HTML-like templates</h3>
+<div class="listingblock">
+<div class="title">Web.xml</div>
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml"> &lt;web-app&gt;
+   &lt;servlet&gt;
+     &lt;servlet-name&gt;template&lt;/servlet-name&gt;
+     &lt;servlet-class&gt;groovy.servlet.TemplateServlet&lt;/servlet-class&gt;
+   &lt;/servlet&gt;
+   &lt;servlet-mapping&gt;
+     &lt;servlet-name&gt;template&lt;/servlet-name&gt;
+     &lt;url-pattern&gt;*.html&lt;/url-pattern&gt;
+   &lt;/servlet-mapping&gt;
+ &lt;/web-app&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_template_engine_configuration">Template Engine Configuration</h3>
+<div class="paragraph">
+<p>By default, the <strong>TemplateServlet</strong> uses the <strong>SimpleTemplateEngine</strong> which interprets JSP-like templates. The init parameter template.engine defines the fully qualified class name of the template to use:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>template.engine = [empty] - equals groovy.text.SimpleTemplateEngine</p>
+</li>
+<li>
+<p>template.engine = groovy.text.SimpleTemplateEngine</p>
+</li>
+<li>
+<p>template.engine = groovy.text.GStringTemplateEngine</p>
+</li>
+<li>
+<p>template.engine = groovy.text.XmlTemplateEngine</p>
+</li>
+<li>
+<p>template.engine = groovy.text.DoctorTemplateEngine</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_additional_web_xml_configuration_when_serving_asciidcotor_templates">Additional Web.xml configuration when serving Asciidcotor templates</h3>
+<div class="listingblock">
+<div class="title">web.xml</div>
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">        &lt;servlet&gt;
+		&lt;servlet-name&gt;DoctorTemplateServlet&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;groovyx.caelyf.CaelyfTemplateServlet&lt;/servlet-class&gt;
+ 		&lt;init-param&gt;
+			&lt;param-name&gt;template.engine&lt;/param-name&gt;
+			&lt;param-value&gt;groovy.text.DoctorTemplateEngine&lt;/param-value&gt;
+		&lt;/init-param&gt;
+        &lt;init-param&gt;
+            &lt;!-- Remove the default "generated by" messages from the templates --&gt;
+            &lt;param-name&gt;generated.by&lt;/param-name&gt;
+            &lt;param-value&gt;true&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;verbose&lt;/param-name&gt;
+            &lt;!-- Output generation time in the HTML, see source page --&gt;
+            &lt;param-value&gt;true&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;DoctorTemplateServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;*.adoc&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -527,187 +656,10 @@ MetaBuilder mb = new MetaBuilder(getClass().getClassLoader())</code></pre>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Follow <a href="http://groovy.codehaus.org/MetaBuilder">this tutorial</a> for more details
+Set &lt;load-on-startup&gt; parameter to zero to improve initial performance or if asciidoctor files are not used immediately
 </td>
 </tr>
 </table>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_declare_your_own_domain_specific_language">Declare your own domain-specific language</h5>
-<div class="listingblock">
-<div class="title">Define Your DSL</div>
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">class Customer {
-    def name
-    def dateOfBirth
-}
-
-mb.define {
-    customer(factory: Customer) {
-        properties {
-            name()
-            dateOfBirth()
-        }
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_build_an_object">Build an object</h5>
-<div class="listingblock">
-<div class="title">Make That Object !</div>
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">def aCustomer = mb.build {
-    customer {
-        name = 'Guillaume'
-        dateOfBirth  = '25/12/1975'
-    }
-}
-
-println aCustomer.toString();</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-MrHaki offers another approach to <a href="http://mrhaki.blogspot.fr/2011/11/groovy-goodness-create-simple-builders.html">make your own builder</a> using closures.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Jeremy Meyer reviews groovy builders <a href="http://www.artima.com/weblogs/viewpost.jsp?thread=296081">here</a> and <a href="http://www.artima.com/weblogs/viewpost.jsp?thread=291467">here</a>.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_buildersupport">BuilderSupport</h4>
-<div class="paragraph">
-<p>This is an abstract set of helper methods plus several implemented methods. As part of the groovy.util package, this BuilderSupport class has node creation features, plus parent/child tracking for more complex hierarchical networks of nodes. Individual nodes are held as</p>
-</div>
-<div class="ulist">
-<div class="title">Node Composition</div>
-<ul>
-<li>
-<p>One object - a leaf node</p>
-</li>
-<li>
-<p>One pair of name/value content - either a leaf node or a branch node; the <em>value</em> can be a more complex object</p>
-</li>
-<li>
-<p>One pair of name/attribute map content  - either a leaf node or a branch node; the <em>attribute map</em> can be a more complex object</p>
-</li>
-<li>
-<p>One pair of name/attribute map content and a <em>value</em> object  - either a leaf node or a branch node; the <em>value</em> can be a more complex object or a closure</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<a href="http://groovy.codehaus.org/Make+a+builder">Full Examples of NodeBuilder and BuilderSupport </a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="title">Let&#8217;s use the <strong>NodeBuilder</strong> from the previous note</div>
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">def projectBuilder = new NodeBuilder()
-
-projectBuilder.staff(kind:'technical', groovy:true) {
-  person(x:296,  name:'James', skillset:'java,groovy') {
-    project(name:'payroll')
-    project(name:'websites')
-  }
-  person(x:234,  name:'Sandra', skillset:'groovy,cobol') {
-    project(name:'payroll')
-    project(name:'billing')
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_factorybuildersupport">FactoryBuilderSupport</h4>
-<div class="paragraph">
-<p><a href="http://groovy.codehaus.org/FactoryBuilderSupport">How It Works</a></p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_existing_builders">Existing builders</h3>
-<div class="paragraph">
-<p><a href="http://www.ibm.com/developerworks/java/library/j-pg05199/">Building, parsing, and slurping XML with Groovy</a></p>
-</div>
-<div class="sect3">
-<h4 id="_markupbuilder">MarkupBuilder</h4>
-<div class="paragraph">
-<p><a href="http://groovy.codehaus.org/gapi/groovy/xml/MarkupBuilder.html">Markup Builder API</a></p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_streamingmarkupbuilder_tbd">StreamingMarkupBuilder (TBD)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_saxbuilder_tbd">SaxBuilder (TBD)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_staxbuilder_tbd">StaxBuilder (TBD)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_dombuilder_tbd">DomBuilder (TBD)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_nodebuilder_tbd">NodeBuilder (TBD)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_jsonbuilder_tbd">JsonBuilder (TBD)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_streamingjsonbuilder_tbd">StreamingJsonBuilder (TBD)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_swingbuilder_tbd">SwingBuilder (TBD)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_antbuilder_tbd">AntBuilder (TBD)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_clibuilder_tbd">CliBuilder (TBD)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_objectgraphbuilder_tbd">ObjectGraphBuilder (TBD)</h4>
-
 </div>
 </div>
 </div>
@@ -715,8 +667,7 @@ projectBuilder.staff(kind:'technical', groovy:true) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.1<br>
-Last updated 2016-12-03 15:09:05 CET
+Last updated 2016-12-04 23:50:51 CET
 </div>
 </div>
 </body>

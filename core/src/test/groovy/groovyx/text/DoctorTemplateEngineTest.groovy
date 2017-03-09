@@ -65,9 +65,10 @@ See: http://mrhaki.blogspot.fr/2015/02/spocklight-capture-and-assert-system.html
 
 */
 
-class DoctorHelperTest extends spock.lang.Specification {
-    DoctorHelper test;
-
+class DoctorTemplateEngineTest extends spock.lang.Specification {
+    DoctorTemplateEngine test;
+    String s = "= Hi Kids\n\n== Title One\n\nNews is next.\n";
+    
     @org.junit.Rule
     OutputCapture capture = new OutputCapture()
 
@@ -79,66 +80,56 @@ class DoctorHelperTest extends spock.lang.Specification {
     // run before every feature method
     def setup() 
     {
-        test = new DoctorHelper();
+        println "\nStart of testing for DoctorTemplateEngine feature"
+        test = new DoctorTemplateEngine();
     }          
 
     // run after every feature method
     def cleanup() 
     {
-
+        println "end of testing for DoctorTemplateEngine feature\n"
     }        
 
     // run after the last feature method    
     def cleanupSpec() 
     {
-        println "end of testing for DoctorHelper"
+        println "\nend of all testing for DoctorTemplateEngine\n"
     }   
  
-      def "Build default DoctorHelper"() {
-          when:     'default DoctorHelper has been built'
+ 
+    def "Build default DoctorTemplateEngine"() {
+        when:     'default DoctorTemplateEngine has been built'
         then:     test != null;
-                  test.getClass() == DoctorHelper;
-      } // end of feature method
+                  test.getClass() == DoctorTemplateEngine;
+    } // end of feature method
 
-      def "Turn off header/trailer wrapper from output using noWrapper()"() {
-          when:     'includeHeaderFooter set to false'
-                    test.noWrapper()
-        then:     test != null;
-                  test.includeHeaderFooter == false;
-      } // end of feature method
  
-      def "Turn on header/trailer wrapper from output using .setWrapper(true)"() {
-          when:     'includeHeaderFooter set to true'
-                    def flag = test.setWrapper(true)
+    def "Build non-default DoctorTemplateEngine"() {
+        when:     'non-default DoctorTemplateEngine has been built'
+                  test = new DoctorTemplateEngine(true);
         then:     test != null;
-                  flag == true;
-                  test.includeHeaderFooter == true;
-      } // end of feature method
- 
-      def "Turn off header/trailer wrapper from output using .setWrapper(false)"() {
-          when:     'includeHeaderFooter set to false'
-                    def flag = test.setWrapper(false);
-                    def tx = test.render("Hello World\n");
-                    println "|"+tx+"|";
-                    
-        then:     test != null;
-                  flag == false;
-                  test.includeHeaderFooter == false;
-                  tx.size() > 48
-                  tx == '<div class="paragraph">\n<p>Hello World</p>\n</div>'
+                  test.getClass() == DoctorTemplateEngine;
+                  test.debug == true;
+    } // end of feature method
 
-      } // end of feature method
+
+    def "createTemplate(Reader)"() {
+        when:     'createTemplate set to get input from Reader'
+                  StringReader sr = new StringReader(s);
+                  DoctorTemplate dt = test.createTemplate(sr)
+                  
+        then:     test != null;
+                  dt != null;
+                  dt.getClass() == DoctorTemplate;
+    } // end of feature method
  
-      def "Render output"() {
-          when:     'try to render = Hello World'
-                    def ans = test.render("= Hello World\n");
-        then:     ans != null;
-                  ans.size() == 30257 || 30255;
-                  ans.endsWith("""</div>
-</div>
-</body>
-</html>""") == true
-      } // end of feature method
+
+    def "createTemplate()"() {
+        when:     'createTemplate set to get no input from method call'
+                  DoctorTemplate dt = test.createTemplate()
+                  
+        then:     thrown(Exception);
+    } // end of feature method
  
  
 } // end of class

@@ -36,7 +36,7 @@ public class DoctorTester
     */    
     public static void main(String[] args)
     {
-    	// write a log of everything as fo5 output file handle
+        // write a log of everything as fo5 output file handle
         File fo5 = new File('resources/DoctorTester.log')
         fo5.write("DoctorTemplateEngine starting\n");
 
@@ -54,7 +54,7 @@ Document Date:{docdate}
 http://docs.gopivotal.com/pivotalcf/concepts/roles.html[Orgs, Spaces, Roles, and Permissions ]
 """.toString();
 
-	// test simple asciidoctor generation plus binding for the make() method
+    // test simple asciidoctor generation plus binding for the make() method
         def binding = [now: new Date(114, 11, 1), name: 'Hubert Klein Ikkink']
         def output = dr.createTemplate(source).make(binding);
         
@@ -65,8 +65,8 @@ http://docs.gopivotal.com/pivotalcf/concepts/roles.html[Orgs, Spaces, Roles, and
         fo1.write(output.toString());
         fo5.append(output.toString());2
 
-		// test no wrapper generation
-		StringReader sr = new StringReader(source);
+        // test no wrapper generation
+        StringReader sr = new StringReader(source);
         output = dr.createTemplate(sr, false).make(binding)
 
         // dump engine internals
@@ -77,32 +77,32 @@ http://docs.gopivotal.com/pivotalcf/concepts/roles.html[Orgs, Spaces, Roles, and
         fo5.append(output.toString());
 
 
-	// a bigger test
+    // a bigger test
         File fi = new File('resources/Sample1.adoc');
         def output3 = dr.createTemplate(fi).make(binding)
 
         // dump engine internals
         fo5.append(dr.toString());
 
-    	File fo = new File('resources/DoctorTemplateEngineTest3.html')
+        File fo = new File('resources/DoctorTemplateEngineTest3.html')
         fo.write(output3.toString());
         fo5.append(output3.toString());
 
 
-	// another test with fresh Engine
-	dr = new DoctorTemplateEngine();
-	
-	// dump engine internals
+    // another test with fresh Engine
+    dr = new DoctorTemplateEngine();
+    
+    // dump engine internals
         fo5.append(dr.toString());
 
-	// a more complex test
+    // a more complex test
         File fi4 = new File('resources/DSL.adoc');
         def output4 = dr.createTemplate(fi4).make(binding)
 
         // dump engine internals
         fo5.append(dr.toString());
         
-    	File fo4 = new File('resources/DoctorTemplateEngineTest4.html')
+        File fo4 = new File('resources/DoctorTemplateEngineTest4.html')
         fo4.write(output4.toString());
         fo5.append(output4.toString());
         

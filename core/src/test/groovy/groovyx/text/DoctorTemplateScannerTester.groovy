@@ -35,11 +35,11 @@ public class DoctorTemplateScannerTester
     public static void main(String[] args)
     {
 
-    	// write a log of everything as fo5 output file handle
+        // write a log of everything as fo5 output file handle
         File fo5 = new File('resources/DoctorTemplateScannerTester.log')
         fo5.write("DoctorTemplateScanner arrives\n");
 
-	// invent a complex and broken set of syntax
+    // invent a complex and broken set of syntax
         def title = ''' 0   0    1    1    2    2    3    3    4    5    5    5    6    6    7    7    8
 012345678901234567890123456789012345678901234567890123456789012345678901234567890'''
         def payload = 
@@ -134,7 +134,7 @@ My name is <%= request.getAttribute('name') %>
 
         fo5.append title+'\n';
         fo5.append "------------------------------"+'\n'
-	dts = new DoctorTemplateScanner();
+    dts = new DoctorTemplateScanner();
         fo5.append payload4+'\n';
         //dts.setDebug();
         fo5.append dts.parse(payload4)+'\n';

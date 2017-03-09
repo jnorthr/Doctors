@@ -16,7 +16,7 @@ public class DrTest
     public static void main(String[] args)
     {
         println "--- the start ---"
-	String tl = (args.size()>0) ? args[0].replaceAll('\\\\','/') : "Servlets 3.0";  
+    String tl = (args.size()>0) ? args[0].replaceAll('\\\\','/') : "Servlets 3.0";  
         DoctorTemplateEngine dr = new DoctorTemplateEngine();
         def source = '''= Project Folder Location: {title}
 Community Documentation <${name}@orange.fr>

@@ -37,7 +37,7 @@ public class DoctorTemplateTester
     */    
     public static void main(String[] args)
     {
-    	// write a log of everything as flog output file handle    
+        // write a log of everything as flog output file handle    
         File flog = new File('resources/DoctorTemplateTester.log')
         flog.write("DoctorTemplate starting\n");
                 
@@ -53,11 +53,11 @@ public class DoctorTemplateTester
         println "\n------------------------\nDoctorTemplate End Test 1 :\n-------------------------------------\n";
 
 
-	// ------------------------------------------------------------
+    // ------------------------------------------------------------
         // Provide data for the binding.
         // The closure is not executed when the make method is finished.
         println "\n------------------------\nDoctorTemplate Start Test 2 :\n-------------------------------------\n";
- 		dr = new DoctorTemplate()
+         dr = new DoctorTemplate()
         final writable = dr.make(user:'mrhaki', { out ->
             out.println "= Welcome ${user},\n:linkcss:\n"
             out.print "Today on ${new Date(year: 115, month: 9, date: 4).format('dd-MM-yyyy')}, "
@@ -71,7 +71,7 @@ public class DoctorTemplateTester
         println "\n------------------------\nDoctorTemplate End Test 2 :\n-------------------------------------\n";
         
 
-		// ------------------------------------------------------------
+        // ------------------------------------------------------------
         // Append contents to a file.
         // NOTE: The leftShift (<<) operator on File is implemented in Groovy to use the File.append() method.
         // The append() method creates a new Writer and invokes the write() method which is re-implemented in Groovy if the argument
@@ -86,9 +86,9 @@ public class DoctorTemplateTester
         println "\n------------------------\nDoctorTemplate End Test 3 :\n-------------------------------------\n";
 
          
-		// step 4
+        // step 4
         println "\n------------------------\nDoctorTemplate Start Test 4 :\n-------------------------------------\n";
-		def dr4 = new DoctorTemplate()
+        def dr4 = new DoctorTemplate()
         def m = ['user':'jnorthr']
         final writable2 = dr4.make(m, { out ->
             out.println "= Welcome ${user},\n:linkcss:\n"
@@ -103,20 +103,20 @@ public class DoctorTemplateTester
         println "\n------------------------\nDoctorTemplate End Test 4 :\n-------------------------------------\n";
 
 
-		// ------------------------------------------------------------
+        // ------------------------------------------------------------
         println "\n------------------------\nDoctorTemplate Start Test 5 :\n-------------------------------------\n";
         flog.append "\nDoctorTemplate step 5 :";
-		def dr5 = new DoctorTemplate()
+        def dr5 = new DoctorTemplate()
         File fo5 = new File('resources/DoctorTemplateTest5.html')
         def x5 = dr5.make().toString();
         fo5.write(x5)
         println "\n------------------------\nDoctorTemplate End Test 5 :\n-------------------------------------\n";
 
 
-		// ------------------------------------------------------------
+        // ------------------------------------------------------------
         println "\n------------------------\nDoctorTemplate Start Test 6 :\n-------------------------------------\n";
         flog.append "\nDoctorTemplate step 6 :";
-		def dr6 = new DoctorTemplate()
+        def dr6 = new DoctorTemplate()
     
         dr6.setPayload("= DoctorTemplate step 6\n:linkcss:\n\nThis test uses the alternative code to define the payload to be rendered.")
         File fo6 = new File('resources/DoctorTemplateTest6.html')
@@ -124,14 +124,14 @@ public class DoctorTemplateTester
         println "\n------------------------\nDoctorTemplate End Test 6 :\n-------------------------------------\n";
 
 
-	// ------------------------------------------------------------
+    // ------------------------------------------------------------
         println "\n------------------------\nDoctorTemplate Start Test 7 :\n-------------------------------------\n";
         def payload7 = '''= Welcome ${user},
 :linkcss:
 Today on 04-09-2015, we have a Groovy party!
 '''.toString();
-		def doc7 =  new DoctorTemplate();
-		doc7.load(payload7);
+        def doc7 =  new DoctorTemplate();
+        doc7.load(payload7);
         def result7 = doc7.make()
         println "payload7 created document result of "+result7.size()+" bytes"
         flog.append "\nDoctorTemplate step 7 - did not provide user in binding so it's not populated in the result :"+"-------------------------------------\n";
@@ -142,7 +142,7 @@ Today on 04-09-2015, we have a Groovy party!
 
 
 
-		// ------------------------------------------------------------
+        // ------------------------------------------------------------
         println "\n------------------------\nDoctorTemplate Start Test 8 :\n-------------------------------------\n";
         def source8 = """= Servlets 3.0
 Community Documentation <\${user}@groovy.codehaus.org>
@@ -193,7 +193,7 @@ include::resources/header.txt[]
 
 
 
-		// -----------------------------------------------------
+        // -----------------------------------------------------
         println "\n------------------------\nDoctorTemplate Start Test 9 :\n-------------------------------------\n";
         def source9 = '''<% include resources/header.txt %>
 :linkcss:
@@ -214,7 +214,7 @@ The document title is called {doctitle} and has {fred} parts with groovy +++<%= 
         println "\n------------------------\nDoctorTemplate End Test 9 :\n-------------------------------------\n";
 
 
-	// ------------------------------------------------------
+    // ------------------------------------------------------
         println "\n------------------------\nDoctorTemplate Start Test 10 :\n-------------------------------------\n";
         def source10 = '''= testCreateTemplate() Test 10 - template with asciidoctor include file exists,
 Community Documentation <Users@groovy.codehaus.org>
@@ -243,9 +243,9 @@ buildDir/template.groovy
             doc10.load(source10.toString())
             doc10.make()
             flog.append "\nDoctorTemplate step 10 :\n-------------------------------------\n";
-	    	File fo10 = new File('resources/DoctorTemplateTest10.html')
-    	    fo10.write(doc10.toString());
-	        println "source10 created toString() of "+doc10.toString().size()+" bytes"
+            File fo10 = new File('resources/DoctorTemplateTest10.html')
+            fo10.write(doc10.toString());
+            println "source10 created toString() of "+doc10.toString().size()+" bytes"
         }
         catch(any)
         {

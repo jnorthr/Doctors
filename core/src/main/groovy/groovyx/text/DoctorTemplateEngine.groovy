@@ -1,7 +1,7 @@
 package groovyx.text;
 
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import groovy.text.*
 import groovy.transform.*;
 
 import groovy.util.logging.Slf4j
-
 import org.slf4j.*
 
 /** 
@@ -42,6 +41,7 @@ public class DoctorTemplateEngine extends TemplateEngine
     /** a handle to the template text styled in asciidoctor syntax */ 
     DoctorTemplate template;
     
+
    /** 
     * Default Constructor 
     * 
@@ -51,6 +51,19 @@ public class DoctorTemplateEngine extends TemplateEngine
     {
         super();
         say "DoctorTemplateEngine() def constructor"
+    } // end of constructor
+    
+   /** 
+    * Non-Default Constructor 
+    * 
+    * @param yn true turns on debug flag to allow more debug messages.
+    * @return DoctorTemplateEngine object
+    */     
+    public DoctorTemplateEngine(boolean yn)
+    {
+        super();
+        this.debug = yn;
+        say "DoctorTemplateEngine(true) debug constructor"
     } // end of constructor
     
     

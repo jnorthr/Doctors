@@ -58,10 +58,12 @@ dependencies {
 	// better put log4j.properties in the src/main/resources folders 
 	compile 'org.codehaus.groovy:groovy-all:2.4.7'
 	compile 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3' so it runs on jdk6
-    	runtime 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3'
+    runtime 'org.asciidoctor:asciidoctorj:1.5.0'  //6.0-alpha.3'
     
 	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-    	testCompile 'org.springframework.boot:spring-boot-test:1.4.1.RELEASE'
+    testCompile 'org.springframework.boot:spring-boot-test:1.4.1.RELEASE'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'org.springframework.boot:spring-boot:1.2.1.RELEASE'
 
     
     // sfl4j is just a facade for loggers. To actually get logging to work, you need to
